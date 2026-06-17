@@ -2,7 +2,8 @@ function FighterCard ({
     fighter, 
     index, 
     deleteFighter,
-    startEditing
+    startEditing,
+    selectFighter
 }) {
     return (
         <div>
@@ -11,6 +12,9 @@ function FighterCard ({
             <p>KOs: {fighter.record.knockouts}</p>
             <p>Decisions: {fighter.record.decisions}</p>
 
+            <button onClick={() => selectFighter(fighter)}>
+                Select
+            </button>
             <button onClick={() => deleteFighter(index)}>
                 Delete
             </button>

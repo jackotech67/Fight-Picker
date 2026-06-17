@@ -33,6 +33,9 @@ function App() {
   const [decisions, setDecisions] = useState("");
 
   const [editingIndex, setEditingIndex] = useState(null);
+  const [fighter1, setFighter1] = useState(null);
+  const [fighter2, setFighter2] = useState(null);
+  const [showComparison, setShowComparison] = useState(false);
 
   function addFighter() {
     if (editingIndex !== null){
@@ -68,9 +71,6 @@ function App() {
       ]);      
     }
 
-    setEditingIndex(null);
-    setEditingFighter(null);
-
     setFirstName("");
     setLastName("");
     setSubmissions("");
@@ -83,14 +83,30 @@ function App() {
   }
 
   function startEditing(fighter, index) {
-    setEditingFighter(fighter);
-
     setFirstName(fighter.firstName);
     setLastName(fighter.lastName);
     setSubmissions(fighter.record.submissions);
     setKnockouts(fighter.record.knockouts);
     setDecisions(fighter.record.decisions);
     setEditingIndex(index)
+  }
+
+  function selectFighter(fighter) {
+    if (fighter1 === null) {
+      setFighter1(fighter);
+    }
+    else if (fighter1 === fighter) {
+      return
+    }
+    else if (fighter2 === null) {
+      setFighter2(fighter);
+    }
+  }
+
+  function resetMatchup() {
+    setFighter1(null);
+    setFighter2(null);
+    setShowComparison(false);
   }
 
   return (
@@ -118,10 +134,40 @@ function App() {
           index={index}
           deleteFighter={deleteFighter}
           startEditing={startEditing}
+          selectFighter={selectFighter}
         />
       ))}
+
+      <div className='comparison-wrapper'>
+        <h2>Comparison</h2>
+        <p>
+          Fighter1: {fighter1 ? `${fighter1.firstName} ${fighter1.lastName}` : "None Selected"}
+        </p>
+        <p>
+          Fighter2: {fighter2 ? `${fighter2.firstName} ${fighter2.lastName}` : "None Selected"}
+        </p>
+        <button onClick={() => setShowComparison(true)}>
+          Compare
+        </button>
+        <button onClick={resetMatchup}>
+          Reset
+        </button>
+
+        {showComparison && (
+          fighter1 && fighter2 ? (
+            <div>
+              <h3>Match up</h3>
+              <p>{fighter1.firstName} vs {fighter2.firstName}</p>
+              <p>Subs: {fighter1.record.submissions} vs {fighter2.record.submissions}</p>
+              <p>KOs: {fighter1.record.knockouts} vs {fighter2.record.knockouts}</p>
+              <p>Decs: {fighter1.record.decisions} vs {fighter2.record.decisions}</p>
+            </div>
+          ) : (<p>Please select two fighters.</p>)
+        )}
+
+      </div> {/* comparison wrap */}
       
-    </div>
+    </div> // return wrap
   );
 }
 
