@@ -3,7 +3,8 @@ function FighterCard ({
     index, 
     deleteFighter,
     startEditing,
-    selectFighter
+    selectFighter,
+    isAdmin
 }) {
     return (
         <div>
@@ -15,12 +16,16 @@ function FighterCard ({
             <button onClick={() => selectFighter(fighter)}>
                 Select
             </button>
-            <button onClick={() => deleteFighter(index)}>
-                Delete
-            </button>
-            <button onClick={() => startEditing(fighter, index)}>
-                Edit
-            </button>
+            {isAdmin && (
+                <>
+                    <button onClick={() => deleteFighter(index)}>
+                        Delete
+                    </button>
+                    <button onClick={() => startEditing(fighter, index)}>
+                        Edit
+                    </button>
+                </>
+            )}
         </div>
     );
 }

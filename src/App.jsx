@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import './App.css'
-import FighterCard from './fighterCard';
+import FighterCard from './FighterCard';
 import AddFighterForm from './AddFighterForm';
+import Navbar from './Navbar';
 
 function App() {
 
@@ -36,6 +37,9 @@ function App() {
   const [fighter1, setFighter1] = useState(null);
   const [fighter2, setFighter2] = useState(null);
   const [showComparison, setShowComparison] = useState(false);
+
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [adminMessage, setAdminMessage] = useState("");
 
   function addFighter() {
     if (editingIndex !== null){
@@ -109,34 +113,49 @@ function App() {
     setShowComparison(false);
   }
 
+  function unlockAdmin() {
+    const code = prompt("Enter admin code");
+    if (code === "password") {
+      setIsAdmin(true);
+      setAdminMessage("");
+    }
+    else {
+      setAdminMessage("Access denied. Nice try Dana")
+    }
+  }
+
+  function lockAdmin() {
+    setIsAdmin(false);
+  }
+
   return (
     <div>
-      <h1>Fighter Picker</h1>
-      <AddFighterForm
-        firstName={firstName}
-        setFirstName={setFirstName}
-        lastName={lastName}
-        setLastName={setLastName}
-        submissions={submissions}
-        setSubmissions={setSubmissions}
-        knockouts={knockouts}
-        setKnockouts={setKnockouts}
-        decisions={decisions}
-        setDecisions={setDecisions}
-        addFighter={addFighter}
-        editingIndex={editingIndex} 
+      <Navbar 
+        unlockAdmin={unlockAdmin}
+        lockAdmin={lockAdmin}
+        isAdmin={isAdmin}
       />
-
-      {fighters.map((fighter, index) => (
-        <FighterCard 
-          key={index} 
-          fighter={fighter}
-          index={index}
-          deleteFighter={deleteFighter}
-          startEditing={startEditing}
-          selectFighter={selectFighter}
+      <h1>Fighter Picker</h1>
+      {isAdmin ? (
+        <AddFighterForm
+          firstName={firstName}
+          setFirstName={setFirstName}
+          lastName={lastName}
+          setLastName={setLastName}
+          submissions={submissions}
+          setSubmissions={setSubmissions}
+          knockouts={knockouts}
+          setKnockouts={setKnockouts}
+          decisions={decisions}
+          setDecisions={setDecisions}
+          addFighter={addFighter}
+          editingIndex={editingIndex} 
         />
-      ))}
+      ) : (
+        <p>
+          Add Fighter: {adminMessage || "Admin access required"}
+        </p>
+      )}
 
       <div className='comparison-wrapper'>
         <h2>Comparison</h2>
@@ -166,6 +185,20 @@ function App() {
         )}
 
       </div> {/* comparison wrap */}
+
+      {fighters.map((fighter, index) => (
+        <FighterCard 
+          key={index} 
+          fighter={fighter}
+          index={index}
+          deleteFighter={deleteFighter}
+          startEditing={startEditing}
+          selectFighter={selectFighter}
+          isAdmin={isAdmin}
+        />
+      ))}
+
+      
       
     </div> // return wrap
   );
