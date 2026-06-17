@@ -2,7 +2,7 @@ function Navbar ({
     unlockAdmin, lockAdmin, isAdmin
 }) {
     return (
-        <nav>
+        <nav className="navbar">
             <button onClick={unlockAdmin}>
                 Admin
             </button>

@@ -1,13 +1,14 @@
 function AddFighterForm({
     firstName, setFirstName,
     lastName, setLastName,
+    weightClass, setWeightClass,
     submissions, setSubmissions,
     knockouts, setKnockouts, 
     decisions, setDecisions,
-    addFighter, editingIndex
+    addFighter, editingId
 }) {
     return (
-        <div>
+        <div className="fighter-form">
             <h2>Add Fighter Form</h2>
             <input
             value={firstName}
@@ -18,6 +19,11 @@ function AddFighterForm({
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             placeholder='Last Name'
+        />
+        <input
+            value={weightClass}
+            onChange={(e) => setWeightClass(e.target.value)}
+            placeholder="Weight Class"  
         />
         <input 
             type="number"
@@ -38,7 +44,7 @@ function AddFighterForm({
             placeholder='Decisions' 
         />
         <button onClick={addFighter}>
-            {editingIndex === null ? "Add Fighter" : "Save changes"}
+            {editingId === null ? "Add Fighter" : "Save changes"}
         </button>
         </div>
     );

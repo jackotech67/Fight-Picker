@@ -8,8 +8,10 @@ function App() {
 
   const [fighters, setFighters] = useState([
     {
+      id: crypto.randomUUID(),
       firstName: "Islam",
       lastName: "Makhachev",
+      weightClass: "Lightweight",
       record: {
         submissions: 12,
         knockouts: 5,
@@ -17,8 +19,10 @@ function App() {
       }
     },
     {
+      id: crypto.randomUUID(),
       firstName: "Alexander",
       lastName: "Volkanovski",
+      weightClass: "Featherweight",
       record: {
         submissions: 3,
         knockouts: 13,
@@ -33,7 +37,13 @@ function App() {
   const [knockouts, setKnockouts] = useState("");
   const [decisions, setDecisions] = useState("");
 
-  const [editingIndex, setEditingIndex] = useState(null);
+  const [weightClass, setWeightClass] = useState("");
+  const [selectedWeightClass, setSelectedWeightClass] = useState("All");
+  const filteredFighters = selectedWeightClass === "All"
+    ? fighters
+    : fighters.filter((fighter) => fighter.weightClass === selectedWeightClass);
+
+  const [editingId, setEditingId] = useState(null);
   const [fighter1, setFighter1] = useState(null);
   const [fighter2, setFighter2] = useState(null);
   const [showComparison, setShowComparison] = useState(false);
@@ -42,13 +52,15 @@ function App() {
   const [adminMessage, setAdminMessage] = useState("");
 
   function addFighter() {
-    if (editingIndex !== null){
+    if (editingId !== null){
       setFighters(
-        fighters.map((fighter, index) => {
-          if (index === editingIndex) {
+        fighters.map((fighter) => {
+          if (fighter.id === editingId) {
             return {
+              ...fighter,
               firstName,
               lastName,
+              weightClass,
               record: {
                 submissions,
                 knockouts,
@@ -59,40 +71,45 @@ function App() {
           return fighter;
         })
       )
+      setEditingId(null);
     }
     else {
       setFighters([
         ...fighters,
         {
+          id: crypto.randomUUID(),
           firstName,
           lastName,
+          weightClass,
           record: {
             submissions, 
             knockouts,
             decisions
           }
         }
-      ]);      
+      ]);     
     }
 
     setFirstName("");
     setLastName("");
+    setWeightClass("");
     setSubmissions("");
     setKnockouts("");
     setDecisions("");
   }
 
-  function deleteFighter(indexToDelete) {
-    setFighters(fighters.filter((fighter, index) => index !== indexToDelete));
+  function deleteFighter(idToDelete) {
+    setFighters(fighters.filter((fighter) => fighter.id !== idToDelete));
   }
 
   function startEditing(fighter, index) {
     setFirstName(fighter.firstName);
     setLastName(fighter.lastName);
+    setWeightClass(fighter.weightClass);
     setSubmissions(fighter.record.submissions);
     setKnockouts(fighter.record.knockouts);
     setDecisions(fighter.record.decisions);
-    setEditingIndex(index)
+    setEditingId(fighter.id);
   }
 
   function selectFighter(fighter) {
@@ -135,27 +152,32 @@ function App() {
         lockAdmin={lockAdmin}
         isAdmin={isAdmin}
       />
-      <h1>Fighter Picker</h1>
-      {isAdmin ? (
-        <AddFighterForm
-          firstName={firstName}
-          setFirstName={setFirstName}
-          lastName={lastName}
-          setLastName={setLastName}
-          submissions={submissions}
-          setSubmissions={setSubmissions}
-          knockouts={knockouts}
-          setKnockouts={setKnockouts}
-          decisions={decisions}
-          setDecisions={setDecisions}
-          addFighter={addFighter}
-          editingIndex={editingIndex} 
-        />
-      ) : (
-        <p>
-          Add Fighter: {adminMessage || "Admin access required"}
-        </p>
-      )}
+      <h1 className='title'>Fighter Picker</h1>
+      
+      <div className="add-fighter-wrapper">
+        {isAdmin ? (
+          <AddFighterForm
+            firstName={firstName}
+            setFirstName={setFirstName}
+            lastName={lastName}
+            setLastName={setLastName}
+            weightClass={weightClass}
+            setWeightClass={setWeightClass}
+            submissions={submissions}
+            setSubmissions={setSubmissions}
+            knockouts={knockouts}
+            setKnockouts={setKnockouts}
+            decisions={decisions}
+            setDecisions={setDecisions}
+            addFighter={addFighter}
+            editingId={editingId} 
+          />
+        ) : (
+          <p>
+            Add Fighter: {adminMessage || "Admin access required"}
+          </p>
+        )}
+      </div>
 
       <div className='comparison-wrapper'>
         <h2>Comparison</h2>
@@ -186,17 +208,35 @@ function App() {
 
       </div> {/* comparison wrap */}
 
-      {fighters.map((fighter, index) => (
-        <FighterCard 
-          key={index} 
-          fighter={fighter}
-          index={index}
-          deleteFighter={deleteFighter}
-          startEditing={startEditing}
-          selectFighter={selectFighter}
-          isAdmin={isAdmin}
-        />
-      ))}
+        <select 
+          className='select-weight-class-button'
+          value={selectedWeightClass}
+          onChange={(e) => setSelectedWeightClass(e.target.value)}
+        >
+          <option value="All">All Weight Classes</option>
+          <option value="Flyweight">Flyweight</option>
+          <option value="Bantamweight">Bantamweight</option>
+          <option value="Featherweight">Featherweight</option>
+          <option value="Lightweight">Lightweight</option>
+          <option value="Welterweight">Welterweight</option>
+          <option value="Middleweight">Middleweight</option>
+          <option value="Light Heavyweight">Light Heavyweight</option>
+          <option value="Heavyweight">Heavyweight</option>
+
+        </select>
+      <div className="fighter-list">
+        {filteredFighters.map((fighter, index) => (
+          <FighterCard 
+            key={fighter.id} 
+            fighter={fighter}
+            index={index}
+            deleteFighter={deleteFighter}
+            startEditing={startEditing}
+            selectFighter={selectFighter}
+            isAdmin={isAdmin}
+          />
+        ))}
+      </div>
 
       
       
