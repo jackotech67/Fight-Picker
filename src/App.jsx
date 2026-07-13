@@ -1,35 +1,43 @@
-import { useState } from 'react'
 import './App.css'
 import FighterCard from './FighterCard';
 import AddFighterForm from './AddFighterForm';
 import Navbar from './Navbar';
+import { useState, useEffect } from 'react';
 
 function App() {
 
-  const [fighters, setFighters] = useState([
-    {
-      id: crypto.randomUUID(),
-      firstName: "Islam",
-      lastName: "Makhachev",
-      weightClass: "Lightweight",
-      record: {
-        submissions: 12,
-        knockouts: 5,
-        decisions: 10
-      }
-    },
-    {
-      id: crypto.randomUUID(),
-      firstName: "Alexander",
-      lastName: "Volkanovski",
-      weightClass: "Featherweight",
-      record: {
-        submissions: 3,
-        knockouts: 13,
-        decisions: 12
-      }
+  const [fighters, setFighters] = useState(() => {
+    const savedFighters = localStorage.getItem("fighters");
+
+    if (savedFighters) {
+      return JSON.parse(savedFighters);
     }
-  ]);
+    
+    return [
+      {
+        id: crypto.randomUUID(),
+        firstName: "Islam",
+        lastName: "Makhachev",
+        weightClass: "Lightweight",
+        record: {
+          submissions: 12,
+          knockouts: 5,
+          decisions: 10
+        }
+      },
+      {
+        id: crypto.randomUUID(),
+        firstName: "Alexander",
+        lastName: "Volkanovski",
+        weightClass: "Featherweight",
+        record: {
+          submissions: 3,
+          knockouts: 13,
+          decisions: 12
+        }
+      }
+    ];
+  });
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -50,6 +58,10 @@ function App() {
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminMessage, setAdminMessage] = useState("");
+
+  useEffect(() => { // run this effect when fighters changes
+    localStorage.setItem("fighters", JSON.stringify(fighters)); 
+  }, [fighters]);
 
   function addFighter() {
     if (editingId !== null){
@@ -225,11 +237,10 @@ function App() {
 
         </select>
       <div className="fighter-list">
-        {filteredFighters.map((fighter, index) => (
+        {filteredFighters.map((fighter) => (
           <FighterCard 
             key={fighter.id} 
             fighter={fighter}
-            index={index}
             deleteFighter={deleteFighter}
             startEditing={startEditing}
             selectFighter={selectFighter}

@@ -1,6 +1,5 @@
 function FighterCard ({
     fighter, 
-    index, 
     deleteFighter,
     startEditing,
     selectFighter,
