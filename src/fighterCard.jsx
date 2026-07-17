@@ -9,9 +9,9 @@ function FighterCard ({
         <div className="fighter-card">
             <h2>{fighter.firstName} {fighter.lastName}</h2>
             <div className="fighter-record">
-                <p>Subs: {fighter.record.submissions}</p>
-                <p>KOs: {fighter.record.knockouts}</p>
-                <p>Decisions: {fighter.record.decisions}</p>
+                <p>Subs: {fighter.submissions}</p>
+                <p>KOs: {fighter.knockouts}</p>
+                <p>Decisions: {fighter.decisions}</p>
             </div>
 
             <div className="select-button">

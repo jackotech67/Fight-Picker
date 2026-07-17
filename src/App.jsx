@@ -6,38 +6,15 @@ import { useState, useEffect } from 'react';
 
 function App() {
 
-  const [fighters, setFighters] = useState(() => {
-    const savedFighters = localStorage.getItem("fighters");
+  const [fighters, setFighters] = useState([]);
 
-    if (savedFighters) {
-      return JSON.parse(savedFighters);
-    }
-    
-    return [
-      {
-        id: crypto.randomUUID(),
-        firstName: "Islam",
-        lastName: "Makhachev",
-        weightClass: "Lightweight",
-        record: {
-          submissions: 12,
-          knockouts: 5,
-          decisions: 10
-        }
-      },
-      {
-        id: crypto.randomUUID(),
-        firstName: "Alexander",
-        lastName: "Volkanovski",
-        weightClass: "Featherweight",
-        record: {
-          submissions: 3,
-          knockouts: 13,
-          decisions: 12
-        }
-      }
-    ];
-  });
+  useEffect(() => {
+    fetch("http://localhost:3000/fighters") // GET request to backend
+    .then((response) => response.json()) // converts backend JSON response into JS object
+    .then((data) => setFighters(data)); // data is now fighters array. updates react state
+  }, []);
+
+  // PRE BACKEND
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -65,41 +42,48 @@ function App() {
 
   function addFighter() {
     if (editingId !== null){
-      setFighters(
-        fighters.map((fighter) => {
-          if (fighter.id === editingId) {
-            return {
-              ...fighter,
-              firstName,
-              lastName,
-              weightClass,
-              record: {
-                submissions,
-                knockouts,
-                decisions
-              }
-            };
-          }
-          return fighter;
-        })
-      )
-      setEditingId(null);
-    }
-    else {
-      setFighters([
-        ...fighters,
-        {
-          id: crypto.randomUUID(),
+      fetch(`http://localhost:3000/fighters/${editingId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
           firstName,
           lastName,
           weightClass,
-          record: {
-            submissions, 
-            knockouts,
-            decisions
-          }
-        }
-      ]);     
+          submissions,
+          knockouts,
+          decisions,
+        }),
+      })
+      .then((response) => response.json())
+      .then((updatedFighter) => {
+        setFighters(
+          fighters.map((fighters) => 
+          fighter.id === editingId ? updatedFighter : fighter)
+        );
+        setEditingId(null);
+      });
+    }
+    else {
+      fetch("http://localhost:3000/fighters", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName, 
+          lastName,
+          weightClass,
+          submissions,
+          knockouts,
+          decisions,
+        }),
+      })
+      .then((response) => response.json())
+      .then((newFighter) => {
+        setFighters([...fighters, newFighter]);
+      });    
     }
 
     setFirstName("");
@@ -111,16 +95,23 @@ function App() {
   }
 
   function deleteFighter(idToDelete) {
-    setFighters(fighters.filter((fighter) => fighter.id !== idToDelete));
+    fetch(`http://localhost:3000/fighters/${idToDelete}`, {
+      method: "DELETE",
+    })
+    .then(() => {
+      setFighters(
+        fighters.filter((fighter) => fighter.id !== idToDelete)
+      );
+    });
   }
 
   function startEditing(fighter, index) {
     setFirstName(fighter.firstName);
     setLastName(fighter.lastName);
     setWeightClass(fighter.weightClass);
-    setSubmissions(fighter.record.submissions);
-    setKnockouts(fighter.record.knockouts);
-    setDecisions(fighter.record.decisions);
+    setSubmissions(fighter.submissions);
+    setKnockouts(fighter.knockouts);
+    setDecisions(fighter.decisions);
     setEditingId(fighter.id);
   }
 
@@ -211,9 +202,9 @@ function App() {
             <div>
               <h3>Match up</h3>
               <p>{fighter1.firstName} vs {fighter2.firstName}</p>
-              <p>Subs: {fighter1.record.submissions} vs {fighter2.record.submissions}</p>
-              <p>KOs: {fighter1.record.knockouts} vs {fighter2.record.knockouts}</p>
-              <p>Decs: {fighter1.record.decisions} vs {fighter2.record.decisions}</p>
+              <p>Subs: {fighter1.submissions} vs {fighter2.submissions}</p>
+              <p>KOs: {fighter1.knockouts} vs {fighter2.knockouts}</p>
+              <p>Decs: {fighter1.decisions} vs {fighter2.decisions}</p>
             </div>
           ) : (<p>Please select two fighters.</p>)
         )}
