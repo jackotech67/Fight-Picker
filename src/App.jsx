@@ -31,11 +31,6 @@ function App() {
   const [knockouts, setKnockouts] = useState("");
   const [decisions, setDecisions] = useState("");
 
-  const [height, setHeight] = useState("");
-  const [reach, setReach] = useState("");
-  const [stance, setStance] = useState("");
-  const [age, setAge] = useState("");
-
   const [weightClass, setWeightClass] = useState("");
   const [selectedWeightClass, setSelectedWeightClass] = useState("All");
   const filteredFighters = selectedWeightClass === "All"
@@ -49,10 +44,6 @@ function App() {
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminMessage, setAdminMessage] = useState("");
-
-  useEffect(() => { // run this effect when fighters changes
-    localStorage.setItem("fighters", JSON.stringify(fighters)); 
-  }, [fighters]);
 
   function addFighter() {
 
@@ -70,11 +61,7 @@ function App() {
           weightClass,
           submissions,
           knockouts,
-          decisions,  
-          height,
-          reach,
-          stance,
-          age,
+          decisions,
         }),
       })
       .then((response) => response.json())
@@ -102,10 +89,6 @@ function App() {
           submissions,
           knockouts,
           decisions,
-          height,
-          reach,
-          stance,
-          age,
         }),
       })
       // add new fighter to state
@@ -121,10 +104,6 @@ function App() {
     setSubmissions("");
     setKnockouts("");
     setDecisions("");
-    setHeight("");
-    setReach("");
-    setStance("");
-    setAge("");
   }
 
   function deleteFighter(idToDelete) {
@@ -149,10 +128,6 @@ function App() {
     setSubmissions(fighter.submissions);
     setKnockouts(fighter.knockouts);
     setDecisions(fighter.decisions);
-    setHeight(fighter.height);
-    setReach(fighter.reach);
-    setStance(fighter.stance);
-    setAge(fighter.age);
     setEditingId(fighter.id);
   }
 
@@ -214,14 +189,6 @@ function App() {
             setKnockouts={setKnockouts}
             decisions={decisions}
             setDecisions={setDecisions}
-            height={height}
-            setHeight={setHeight}
-            reach={reach}
-            setReach={setReach}
-            stance={stance}
-            setStance={setStance}
-            age={age}
-            setAge={setAge}
             addFighter={addFighter}
             editingId={editingId} 
           />

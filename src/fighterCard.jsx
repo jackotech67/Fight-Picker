@@ -9,12 +9,8 @@ function FighterCard ({
         <div className="fighter-card">
             <h2>{fighter.firstName} {fighter.lastName}</h2>
 
-            <p>Weight Class: {fighter.weightClass}</p>
-            <p>Height: {fighter.height}</p>
-            <p>Reach: {fighter.reach}</p>
-            <p>Stance: {fighter.stance}</p>
-            <p>Age: {fighter.age}</p>
-
+            <p>{fighter.weightClass}</p>
+            
             <div className="fighter-record">
                 <p>Subs: {fighter.submissions}</p>
                 <p>KOs: {fighter.knockouts}</p>
