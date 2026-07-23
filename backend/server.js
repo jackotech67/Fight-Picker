@@ -35,7 +35,11 @@ app.get("/fighters", async (req, res) => {
             weight_class AS "weightClass",
             submissions,
             knockouts, 
-            decisions
+            decisions,
+            height,
+            reach,
+            stance,
+            age
         FROM fighters
         `
     );
@@ -63,6 +67,10 @@ app.post("/fighters", async (req, res) => {
         submissions, 
         knockouts, 
         decisions,
+        height, 
+        reach, 
+        stance,
+        age
     } = req.body;
 
     // validate the submitted weight class
@@ -81,9 +89,13 @@ app.post("/fighters", async (req, res) => {
             weight_class,
             submissions,
             knockouts,
-            decisions
-        )
-        VALUES ($1, $2, $3, $4, $5, $6)
+            decisions,
+            height,
+            reach, 
+            stance,
+            age
+            )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
         RETURNING
             id,
             first_name AS "firstName",
@@ -91,7 +103,11 @@ app.post("/fighters", async (req, res) => {
             weight_class AS "weightClass",
             submissions,
             knockouts, 
-            decisions    
+            decisions,
+            height, 
+            reach,
+            stance,
+            age    
         `,
         [
             firstName,
@@ -100,6 +116,10 @@ app.post("/fighters", async (req, res) => {
             submissions,
             knockouts, 
             decisions,
+            height,
+            reach,
+            stance, 
+            age
         ]
     );
 
@@ -162,6 +182,10 @@ app.put("/fighters/:id", async (req, res) => {
             submissions,
             knockouts,
             decisions,
+            height,
+            reach,
+            stance,
+            age
         } = req.body; 
 
         // validate the data request before accessing the database
@@ -181,8 +205,12 @@ app.put("/fighters/:id", async (req, res) => {
                 weight_class = $3, 
                 submissions = $4, 
                 knockouts = $5, 
-                decisions = $6
-            WHERE id = $7
+                decisions = $6,
+                height = $7,
+                reach = $8,
+                stance = $9,
+                age = $10
+            WHERE id = $11
             RETURNING
                 id, 
                 first_name AS "firstName",
@@ -190,7 +218,11 @@ app.put("/fighters/:id", async (req, res) => {
                 weight_class AS "weightClass",
                 submissions, 
                 knockouts, 
-                decisions
+                decisions, 
+                height,
+                reach,
+                stance,
+                age
             `,
             [
                 firstName, 
@@ -199,6 +231,10 @@ app.put("/fighters/:id", async (req, res) => {
                 submissions,
                 knockouts,
                 decisions,
+                height,
+                reach,
+                stance,
+                age,
                 id,
             ]
         );

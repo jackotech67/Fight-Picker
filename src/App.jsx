@@ -25,13 +25,16 @@ function App() {
     .then((data) => setFighters(data)); // data is now fighters array. updates react state
   }, []);
 
-  // PRE BACKEND
-
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [submissions, setSubmissions] = useState("");
   const [knockouts, setKnockouts] = useState("");
   const [decisions, setDecisions] = useState("");
+
+  const [height, setHeight] = useState("");
+  const [reach, setReach] = useState("");
+  const [stance, setStance] = useState("");
+  const [age, setAge] = useState("");
 
   const [weightClass, setWeightClass] = useState("");
   const [selectedWeightClass, setSelectedWeightClass] = useState("All");
@@ -52,22 +55,30 @@ function App() {
   }, [fighters]);
 
   function addFighter() {
+
+    // if editing an existing fighter, update it in the database
     if (editingId !== null){
       fetch(`http://localhost:3000/fighters/${editingId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
+        // send the updated fighter data to the backend
         body: JSON.stringify({
           firstName,
           lastName,
           weightClass,
           submissions,
           knockouts,
-          decisions,
+          decisions,  
+          height,
+          reach,
+          stance,
+          age,
         }),
       })
       .then((response) => response.json())
+      // replace the old fighter in state with updated version
       .then((updatedFighter) => {
         setFighters(
           fighters.map((fighter) => 
@@ -76,12 +87,14 @@ function App() {
         setEditingId(null);
       });
     }
+    // otherwise create a new fighter
     else {
       fetch("http://localhost:3000/fighters", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        // send the new fighter data to the backend
         body: JSON.stringify({
           firstName, 
           lastName,
@@ -89,26 +102,39 @@ function App() {
           submissions,
           knockouts,
           decisions,
+          height,
+          reach,
+          stance,
+          age,
         }),
       })
+      // add new fighter to state
       .then((response) => response.json())
       .then((newFighter) => {
         setFighters([...fighters, newFighter]);
       });    
     }
-
+    // clear the form ready for the next entry
     setFirstName("");
     setLastName("");
     setWeightClass("");
     setSubmissions("");
     setKnockouts("");
     setDecisions("");
+    setHeight("");
+    setReach("");
+    setStance("");
+    setAge("");
   }
 
   function deleteFighter(idToDelete) {
+
+    // delete the fighter from the database
     fetch(`http://localhost:3000/fighters/${idToDelete}`, {
       method: "DELETE",
     })
+
+    // remove the deleted fighter from state
     .then(() => {
       setFighters(
         fighters.filter((fighter) => fighter.id !== idToDelete)
@@ -116,13 +142,17 @@ function App() {
     });
   }
 
-  function startEditing(fighter, index) {
+  function startEditing(fighter) {
     setFirstName(fighter.firstName);
     setLastName(fighter.lastName);
     setWeightClass(fighter.weightClass);
     setSubmissions(fighter.submissions);
     setKnockouts(fighter.knockouts);
     setDecisions(fighter.decisions);
+    setHeight(fighter.height);
+    setReach(fighter.reach);
+    setStance(fighter.stance);
+    setAge(fighter.age);
     setEditingId(fighter.id);
   }
 
@@ -184,6 +214,14 @@ function App() {
             setKnockouts={setKnockouts}
             decisions={decisions}
             setDecisions={setDecisions}
+            height={height}
+            setHeight={setHeight}
+            reach={reach}
+            setReach={setReach}
+            stance={stance}
+            setStance={setStance}
+            age={age}
+            setAge={setAge}
             addFighter={addFighter}
             editingId={editingId} 
           />
