@@ -1,16 +1,68 @@
-# React + Vite
+## Getting Started
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+1. Clone the repository
 
-Currently, two official plugins are available:
+```bash
+git clone <repo-url>
+```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+2. Install dependencies
 
-## React Compiler
+```bash
+npm install
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+3. Start the frontend
 
-## Expanding the ESLint configuration
+```bash
+npm run dev
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+4. Start the backend
+
+```bash
+cd backend
+npm install
+npm start
+```
+
+5. Ensure PostgreSQL is running.
+
+## Fighter Picker
+
+Overview
+
+A full stack web application built to learn about modern web development, driven by a love for mixed martial arts and coding. This is an active project under continuous development with many cool ideas coming soon.
+
+Current features:
+* View library of fighters
+* Add / edit / delete fighters
+* Weightclass filter
+* Basic fighter comparison
+
+Cool ideas coming soon:
+* User authentication and admin controls
+* Fighter profile pages
+* Advanced fighter statistics
+* Upcoming UFC events
+* Fight prediction tools
+* Fighter search
+* Responsive UI improvements
+
+## Tech stack
+
+Frontend
+* React
+* CSS
+* JavaScript
+* Vite
+  
+Backend
+* Node.js
+* Express
+  
+Database
+* PostgreSQL
+
+Other
+* REST API
