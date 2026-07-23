@@ -283,9 +283,6 @@ function App() {
           />
         ))}
       </div>
-
-      
-      
     </div> // return wrap
   );
 }
