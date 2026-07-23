@@ -1,7 +1,7 @@
 function AddFighterForm({
     firstName, setFirstName,
     lastName, setLastName,
-    weightClass, setWeightClass,
+    weightClass, setWeightClass, weightClasses,
     submissions, setSubmissions,
     knockouts, setKnockouts, 
     decisions, setDecisions,
@@ -20,11 +20,17 @@ function AddFighterForm({
             onChange={(e) => setLastName(e.target.value)}
             placeholder='Last Name'
         />
-        <input
+        <select
             value={weightClass}
             onChange={(e) => setWeightClass(e.target.value)}
-            placeholder="Weight Class"  
-        />
+        >
+            {weightClasses.map((weightClass) => (
+                <option key={weightClass} value={weightClass}>
+                    {weightClasses}
+                </option>
+            ))}
+        </select> 
+        
         <input 
             type="number"
             value={submissions}

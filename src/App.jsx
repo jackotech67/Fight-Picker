@@ -4,6 +4,17 @@ import AddFighterForm from './AddFighterForm';
 import Navbar from './Navbar';
 import { useState, useEffect } from 'react';
 
+const weightClasses = [
+  "Flyweight",
+  "Bantamweight",
+  "Featherweight",
+  "Lightweight",
+  "Welterweight",
+  "Middleweight",
+  "Light Heavyweight",
+  "Heavyweight",
+];
+
 function App() {
 
   const [fighters, setFighters] = useState([]);
@@ -59,7 +70,7 @@ function App() {
       .then((response) => response.json())
       .then((updatedFighter) => {
         setFighters(
-          fighters.map((fighters) => 
+          fighters.map((fighter) => 
           fighter.id === editingId ? updatedFighter : fighter)
         );
         setEditingId(null);
@@ -166,6 +177,7 @@ function App() {
             setLastName={setLastName}
             weightClass={weightClass}
             setWeightClass={setWeightClass}
+            weightClasses={weightClasses}
             submissions={submissions}
             setSubmissions={setSubmissions}
             knockouts={knockouts}
@@ -217,15 +229,9 @@ function App() {
           onChange={(e) => setSelectedWeightClass(e.target.value)}
         >
           <option value="All">All Weight Classes</option>
-          <option value="Flyweight">Flyweight</option>
-          <option value="Bantamweight">Bantamweight</option>
-          <option value="Featherweight">Featherweight</option>
-          <option value="Lightweight">Lightweight</option>
-          <option value="Welterweight">Welterweight</option>
-          <option value="Middleweight">Middleweight</option>
-          <option value="Light Heavyweight">Light Heavyweight</option>
-          <option value="Heavyweight">Heavyweight</option>
-
+          {weightClasses.map((weightClass) => (
+            <option key={weightClass} value={weightClass}>{weightClass}</option>
+          ))}
         </select>
       <div className="fighter-list">
         {filteredFighters.map((fighter) => (
