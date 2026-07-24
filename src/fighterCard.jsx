@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function FighterCard ({
     fighter, 
     deleteFighter,
@@ -7,10 +9,14 @@ function FighterCard ({
 }) {
     return (
         <div className="fighter-card">
-            <h2>{fighter.firstName} {fighter.lastName}</h2>
+            <h2>
+                <Link to={`/fighter/${fighter.id}`}>
+                    {fighter.firstName} {fighter.lastName}
+                </Link>
+            </h2>
 
             <p>{fighter.weightClass}</p>
-            
+
             <div className="fighter-record">
                 <p>Subs: {fighter.submissions}</p>
                 <p>KOs: {fighter.knockouts}</p>

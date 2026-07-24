@@ -39,7 +39,15 @@ app.get("/fighters", async (req, res) => {
             height,
             reach,
             stance,
-            age
+            age,
+            strikes_per_min,
+            striking_accuracy,
+            strikes_absorbed_per_min,
+            striking_defence,
+            takedowns_per_15_min,
+            takedown_accuracy,
+            takedown_defence,
+            submissions_per_15_min
         FROM fighters
         `
     );
@@ -57,6 +65,52 @@ app.get("/fighters", async (req, res) => {
     }
 });
 
+app.get("/fighters/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // retrieve individual fighter by id
+        const result = await pool.query(
+            `
+            SELECT
+                id, 
+                first_name AS "firstName",
+                last_name AS "lastName",
+                weight_class AS "weightClass",
+                submissions,
+                knockouts,
+                decisions,
+                height,
+                reach,
+                stance,
+                age,
+                strikes_per_min,
+                striking_accuracy,
+                strikes_absorbed_per_min,
+                striking_defence,
+                takedowns_per_15_min, 
+                takedown_accuracy,
+                takedown_defence,
+                submissions_per_15_min
+            FROM fighters
+            WHERE id = $1
+            `,
+            [id]
+        );
+
+        // return the fighter
+        res.json(result.rows[0]);
+
+    // handle unexpected server or database errors
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            message: "Internal server error"
+        })
+    }
+})
+
 app.post("/fighters", async (req, res) => {
     try {
         // extract fighter data from the request body
@@ -73,7 +127,17 @@ app.post("/fighters", async (req, res) => {
         age
     } = req.body;
 
-    // validate the submitted weight class
+    // validate submitted data
+    if (firstName.trim() === "" || lastName.trim() === "") {
+        return res.status(400).json({
+            message: "First and last name are required.",
+        })
+    }
+    if (submissions < 0 || knockouts < 0 || decisions < 0) {
+        return res.status(400).json({
+            message: "Stats cannot be negative"
+        })
+    }
     if (!weightClasses.includes(weightClass)){
         return res.status(400).json({
             message: "Invalid weight class",

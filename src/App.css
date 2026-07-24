@@ -1,3 +1,5 @@
+/* home page */
+
 .navbar {
   display: flex;
   justify-content: flex-end;
@@ -30,6 +32,13 @@
   padding-top: 0.75rem;
   width: 200px;
   border-radius: 8px;
+}
+.fighter-card a {
+  text-decoration: none;
+  color: inherit;
+}
+.fighter-card a:hover {
+  text-decoration: underline;
 }
 .fighter-record {
   padding-left: 1.75rem;
@@ -65,3 +74,25 @@
   gap: 1rem;
 }
 
+/* fighter profile page */
+
+.fighter-profile {
+  padding: 2rem;
+}
+.fighter-header {}
+.fighter-content-wrap {
+  display: flex;
+  gap: 1rem;
+}
+.fighter-summary,
+.fighter-stats,
+.fighter-notes {
+  flex: 1;
+  padding: 1rem;
+  border: 2px solid black;
+  margin: 2px;
+}
+.fighter-history { 
+  margin-top: 100px;
+  text-align: center;
+}  /* wrap this later, fighter-record is used by fightcard */
