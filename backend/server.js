@@ -98,8 +98,21 @@ app.get("/fighters/:id", async (req, res) => {
             [id]
         );
 
+        const winsResult = await pool.query(
+            `
+            SELECT COUNT(*) AS wins
+            FROM fight_performance
+            WHERE fighter_id = $1
+                AND is_winner = TRUE
+            `,
+            [id]
+        )
+
         // return the fighter
-        res.json(result.rows[0]);
+        res.json({
+            ...result.rows[0],
+            wins: Number(winsResult.rows[0].wins)
+        });
 
     // handle unexpected server or database errors
     } catch (error) {
@@ -110,6 +123,44 @@ app.get("/fighters/:id", async (req, res) => {
         })
     }
 })
+
+app.get("/fighters/:id/history", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const result = await pool.query(
+            `
+            SELECT
+                fight_performance.is_winner,
+                fights.id AS fight_id,
+                events.name,
+                events.event_date,
+                fights.method,
+                fights.round,
+                fights.time,
+                fight_performance.knockdowns,
+                fight_performance.strikes,
+                fight_performance.takedowns,
+                fight_performance.submissions
+            FROM fight_performance
+            JOIN fights
+            ON fight_performance.fight_id = fights.id
+            JOIN events
+            ON fights.event_id = events.id
+            WHERE fight_performance.fighter_id = $1;
+            `,
+            [id]
+        );
+
+        res.json(result.rows);
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+});
 
 app.post("/fighters", async (req, res) => {
     try {

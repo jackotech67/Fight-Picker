@@ -124,3 +124,28 @@
   margin-top: 100px;
   text-align: center;
 }  /* wrap this later, fighter-record is used by fightcard */
+
+/* fighter history */
+
+.fighter-history {
+  margin-top: 2rem;
+}
+.fighter-history-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.fight-history-table th,
+.fight-history-table td {
+  padding: 0.75rem 1rem;
+  text-align: center;
+}
+.fight-history-table th {
+  border-bottom: 2px solid #ccc;
+}
+.fight-history-table tbody tr {
+  border-bottom: 1px solid #eee;
+}
+.fight-history-table th:nth-child(2),
+.fight-history-table td:nth-child(2) {
+  text-align: left;
+}

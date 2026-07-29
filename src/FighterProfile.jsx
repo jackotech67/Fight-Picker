@@ -1,15 +1,21 @@
 import { useState, UseEffect, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { data, useParams } from "react-router-dom";
 
 function FighterProfile() {
     const { id } = useParams();
 
     const [fighter, setFighter] = useState(null);
 
+    const [history, setHistory] = useState([]);
+
     useEffect(() => {
         fetch(`http://localhost:3000/fighters/${id}`)
             .then((response) => response.json())
             .then((data) => setFighter(data));
+        
+        fetch(`http://localhost:3000/fighters/${id}/history`)
+            .then((response) => response.json())
+            .then((data) => setHistory(data));
     }, [id]);
 
     if (!fighter) {
@@ -20,6 +26,7 @@ function FighterProfile() {
         <div className="fighter-profile">
             <div className="fighter-header">
                 <h1>{fighter.firstName} {fighter.lastName}</h1>
+                <p>{fighter.wins}-{fighter.losses ?? 0}-{fighter.noContests ?? 0}</p>
                 <h2>{fighter.weightClass}</h2>
             </div>
             <div className="fighter-content-wrap">
@@ -46,7 +53,38 @@ function FighterProfile() {
                 </div>
             </div>
             <div className="fighter-history">
-                <h2>Fight record coming soon...</h2>
+                <h2>Fight history</h2>
+
+                <table className="fight-history-table">
+                    <thead>
+                        <tr>
+                            <th>Result</th>
+                            <th>Event</th>
+                            <th>Method</th>
+                            <th>Round</th>
+                            <th>Time</th>
+                            <th>KD</th>
+                            <th>Str</th>
+                            <th>TD</th>
+                            <th>Sub</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {history.map((fight) => (
+                            <tr key={fight.fight_id}>
+                                <td>{fight.is_winner ? "W" : "L"}</td>
+                                <td>{fight.name}</td>
+                                <td>{fight.method}</td>
+                                <td>{fight.round}</td>
+                                <td>{fight.time}</td>
+                                <td>{fight.knockdowns}</td>
+                                <td>{fight.strikes}</td>
+                                <td>{fight.takedowns}</td>
+                                <td>{fight.submissions}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         </div>
     );
