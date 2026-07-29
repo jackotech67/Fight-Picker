@@ -45,6 +45,8 @@ function HomePage() {
     const [isAdmin, setIsAdmin] = useState(false);
     const [adminMessage, setAdminMessage] = useState("");
 
+    const [highlightStats, setHighlightStats] = useState(false);
+
     function addFighter() {
 
         if (firstName.trim() === "" || lastName.trim() === "") {
@@ -177,92 +179,275 @@ function HomePage() {
         setIsAdmin(false);
     }
 
+    function getWinner(value1, value2) {
+        let className = "";
+        if (highlightStats === false) {
+            return "";
+        }
+        if (value1 > value2) {
+            className = "winner";
+        }
+        else if (value1 < value2) {
+            className = "loser"
+        }
+        return className;
+    }
+    function getLoser(value1, value2) { 
+        let className = "";
+        if (highlightStats === false) {
+            return "";
+        }
+        if (value1 > value2) {
+            className = "loser";
+        }
+        else if (value1 < value2) {
+            className = "winner";
+        }
+        return className;
+    } {/* for inputs where higher value is bad */}
+
     return (
         <div>
-        <Navbar 
-            unlockAdmin={unlockAdmin}
-            lockAdmin={lockAdmin}
-            isAdmin={isAdmin}
-        />
-        <h1 className='title'>Fighter Picker</h1>
-        
-        <div className="add-fighter-wrapper">
-            {isAdmin ? (
-            <AddFighterForm
-                firstName={firstName}
-                setFirstName={setFirstName}
-                lastName={lastName}
-                setLastName={setLastName}
-                weightClass={weightClass}
-                setWeightClass={setWeightClass}
-                weightClasses={weightClasses}
-                submissions={submissions}
-                setSubmissions={setSubmissions}
-                knockouts={knockouts}
-                setKnockouts={setKnockouts}
-                decisions={decisions}
-                setDecisions={setDecisions}
-                addFighter={addFighter}
-                editingId={editingId} 
-            />
-            ) : (
-            <p>
-                Add Fighter: {adminMessage || "Admin access required"}
-            </p>
-            )}
-        </div>
-
-        <div className='comparison-wrapper'>
-            <h2>Comparison</h2>
-            <p>
-            Fighter1: {fighter1 ? `${fighter1.firstName} ${fighter1.lastName}` : "None Selected"}
-            </p>
-            <p>
-            Fighter2: {fighter2 ? `${fighter2.firstName} ${fighter2.lastName}` : "None Selected"}
-            </p>
-            <button onClick={() => setShowComparison(true)}>
-            Compare
-            </button>
-            <button onClick={resetMatchup}>
-            Reset
-            </button>
-
-            {showComparison && (
-            fighter1 && fighter2 ? (
-                <div>
-                <h3>Match up</h3>
-                <p>{fighter1.firstName} vs {fighter2.firstName}</p>
-                <p>Subs: {fighter1.submissions} vs {fighter2.submissions}</p>
-                <p>KOs: {fighter1.knockouts} vs {fighter2.knockouts}</p>
-                <p>Decs: {fighter1.decisions} vs {fighter2.decisions}</p>
-                </div>
-            ) : (<p>Please select two fighters.</p>)
-            )}
-
-        </div> {/* comparison wrap */}
-
-            <select 
-            className='select-weight-class-button'
-            value={selectedWeightClass}
-            onChange={(e) => setSelectedWeightClass(e.target.value)}
-            >
-            <option value="All">All Weight Classes</option>
-            {weightClasses.map((weightClass) => (
-                <option key={weightClass} value={weightClass}>{weightClass}</option>
-            ))}
-            </select>
-        <div className="fighter-list">
-            {filteredFighters.map((fighter) => (
-            <FighterCard 
-                key={fighter.id} 
-                fighter={fighter}
-                deleteFighter={deleteFighter}
-                startEditing={startEditing}
-                selectFighter={selectFighter}
+            <Navbar 
+                unlockAdmin={unlockAdmin}
+                lockAdmin={lockAdmin}
                 isAdmin={isAdmin}
             />
-            ))}
-        </div>
+            <h1 className='title'>Fighter Picker</h1>
+            
+            <div className="add-fighter-wrapper">
+                {isAdmin ? (
+                <AddFighterForm
+                    firstName={firstName}
+                    setFirstName={setFirstName}
+                    lastName={lastName}
+                    setLastName={setLastName}
+                    weightClass={weightClass}
+                    setWeightClass={setWeightClass}
+                    weightClasses={weightClasses}
+                    submissions={submissions}
+                    setSubmissions={setSubmissions}
+                    knockouts={knockouts}
+                    setKnockouts={setKnockouts}
+                    decisions={decisions}
+                    setDecisions={setDecisions}
+                    addFighter={addFighter}
+                    editingId={editingId} 
+                />
+                ) : (
+                <p>
+                    Add Fighter: {adminMessage || "Admin access required"}
+                </p>
+                )}
+            </div>
+
+            <div className='comparison-wrapper'>
+                <h2>Comparison</h2>
+                <p>
+                    Fighter1: {fighter1 ? `${fighter1.firstName} ${fighter1.lastName}` : "None Selected"}
+                </p>
+                <p>
+                    Fighter2: {fighter2 ? `${fighter2.firstName} ${fighter2.lastName}` : "None Selected"}
+                </p>
+                <div className="comparison-controls">
+                    <div className="comparison-buttons">
+                        <button onClick={() => setShowComparison(true)}>Compare</button>
+                        <button onClick={resetMatchup}>Reset</button>
+                    </div>
+                    <button onClick={() => setHighlightStats(!highlightStats)}>
+                        {highlightStats ? "Hide Highlights" : "Highlight Stats"}
+                    </button>
+                </div>
+                
+
+                
+
+                {showComparison && (
+                fighter1 && fighter2 ? (
+                    <div className='comparison-table'>
+                        <table className='comparison-table-content'>
+                            <thead>
+                                <tr>
+                                    <th>{fighter1.firstName}</th>
+                                    <th>Stat</th>
+                                    <th>{fighter2.firstName}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {/* General */}
+                                <tr>
+                                    <th colSpan={3}>General</th>
+                                </tr>
+                                <tr>
+                                    <td className={getWinner(fighter1.height, fighter2.height)}>
+                                        {fighter1.height}
+                                    </td>
+                                    <td>Height</td>
+                                    <td className={getWinner(fighter2.height, fighter1.height)}>
+                                        {fighter2.height}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className={getWinner(fighter1.reach, fighter2.reach)}>
+                                        {fighter1.reach}
+                                    </td>
+                                    <td>Reach</td>
+                                    <td className={getWinner(fighter2.reach, fighter1.reach)}>
+                                        {fighter2.reach}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>{fighter1.stance}</td>
+                                    <td>Stance</td>
+                                    <td>{fighter2.stance}</td>
+                                </tr>
+                                <tr>
+                                    <td className={getLoser(fighter1.age, fighter2.age)}>
+                                        {fighter1.age}
+                                    </td>
+                                    <td>Age</td>
+                                    <td className={getLoser(fighter2.age, fighter1.age)}>
+                                        {fighter2.age}
+                                    </td>
+                                </tr>
+                                {/* Advanced */}
+                                <tr>
+                                    <th colSpan={3}>Advanced</th>
+                                </tr>
+                                <tr>
+                                    <td className={getWinner(fighter1.strikes_per_min, fighter2.strikes_per_min)}>
+                                        {fighter1.strikes_per_min}
+                                    </td>
+                                    <td>Strikes per min</td>
+                                    <td className={getWinner(fighter2.strikes_per_min, fighter1.strikes_per_min)}>
+                                        {fighter2.strikes_per_min}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className={getWinner(fighter1.striking_accuracy, fighter2.striking_accuracy)}>
+                                        {fighter1.striking_accuracy}
+                                    </td>
+                                    <td>Striking accuracy %</td>
+                                    <td className={getWinner(fighter2.striking_accuracy, fighter1.striking_accuracy)}>
+                                        {fighter2.striking_accuracy}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className={getLoser(fighter1.strikes_absorbed_per_min, fighter2.strikes_absorbed_per_min)}>
+                                        {fighter1.strikes_absorbed_per_min}
+                                    </td>
+                                    <td>Strikes absorbed per min</td>
+                                    <td className={getLoser(fighter2.strikes_absorbed_per_min, fighter1.strikes_absorbed_per_min)}>
+                                        {fighter2.strikes_absorbed_per_min}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className={getWinner(fighter1.striking_defence, fighter2.striking_defence)}>
+                                        {fighter1.striking_defence}
+                                    </td>
+                                    <td>Striking defence %</td>
+                                    <td className={getWinner(fighter2.striking_defence, fighter1.striking_defence)}>
+                                        {fighter2.striking_defence}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className={getWinner(fighter1.takedowns_per_15_min, fighter2.takedowns_per_15_min)}>
+                                        {fighter1.takedowns_per_15_min}
+                                    </td>
+                                    <td>Takedowns per 15 min</td>
+                                    <td className={getWinner(fighter2.takedowns_per_15_min, fighter1.takedowns_per_15_min)}>
+                                        {fighter2.takedowns_per_15_min}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className={getWinner(fighter1.takedown_accuracy, fighter2.takedown_accuracy)}>
+                                        {fighter1.takedown_accuracy}
+                                    </td>
+                                    <td>Takedown accuracy %</td>
+                                    <td className={getWinner(fighter2.takedown_accuracy, fighter1.takedown_accuracy)}>
+                                        {fighter2.takedown_accuracy}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className={getWinner(fighter1.takedown_defence, fighter2.takedown_defence)}>
+                                        {fighter1.takedown_defence}
+                                    </td>
+                                    <td>Takedown defence %</td>
+                                    <td className={getWinner(fighter2.takedown_defence, fighter1.takedown_defence)}>
+                                        {fighter2.takedown_defence}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className={getWinner(fighter1.submissions_per_15_min, fighter2.submissions_per_15_min)}>
+                                        {fighter1.submissions_per_15_min}
+                                    </td>
+                                    <td>Submissions per 15 min</td>
+                                    <td className={getWinner(fighter2.submissions_per_15_min, fighter1.submissions_per_15_min)}>
+                                        {fighter2.submissions_per_15_min}
+                                    </td>
+                                </tr>
+
+                                {/* Career */}
+                                <tr>
+                                    <th colSpan={3}>Career</th>
+                                </tr>
+                                <tr>
+                                    <td className={getWinner(fighter1.submissions, fighter2.submissions)}>
+                                        {fighter1.submissions}
+                                    </td>
+                                    <td>Submissions</td>
+                                    <td className={getWinner(fighter2.submissions, fighter1.submissions)}>
+                                        {fighter2.submissions}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className={getWinner(fighter1.knockouts, fighter2.knockouts)}>
+                                        {fighter1.knockouts}
+                                    </td>
+                                    <td>Knockouts</td>
+                                    <td className={getWinner(fighter2.knockouts, fighter1.knockouts)}>
+                                        {fighter2.knockouts}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className={getWinner(fighter1.decisions, fighter2.decisions)}>
+                                        {fighter1.decisions}
+                                    </td>
+                                    <td>Decisions</td>
+                                    <td className={getWinner(fighter2.decisions, fighter1.decisions)}>
+                                        {fighter2.decisions}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (<p>Please select two fighters.</p>)
+                )}
+
+            </div> {/* comparison wrap */}
+
+                <select 
+                className='select-weight-class-button'
+                value={selectedWeightClass}
+                onChange={(e) => setSelectedWeightClass(e.target.value)}
+                >
+                <option value="All">All Weight Classes</option>
+                {weightClasses.map((weightClass) => (
+                    <option key={weightClass} value={weightClass}>{weightClass}</option>
+                ))}
+                </select>
+            <div className="fighter-list">
+                {filteredFighters.map((fighter) => (
+                <FighterCard 
+                    key={fighter.id} 
+                    fighter={fighter}
+                    deleteFighter={deleteFighter}
+                    startEditing={startEditing}
+                    selectFighter={selectFighter}
+                    isAdmin={isAdmin}
+                />
+                ))}
+            </div>
         </div> 
     );
 }
