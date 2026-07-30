@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function FighterCard ({
     fighter, 
     deleteFighter,
-    startEditing,
     selectFighter,
     isAdmin
 }) {
+    const navigate = useNavigate();
     return (
         <div className="fighter-card">
             <h2>
@@ -34,7 +35,7 @@ function FighterCard ({
                     <button onClick={() => deleteFighter(fighter.id)}>
                         Delete
                     </button>
-                    <button onClick={() => startEditing(fighter)}>
+                    <button onClick={() => navigate(`/fighters/${fighter.id}/edit`)}>
                         Edit
                     </button>
                 </div>

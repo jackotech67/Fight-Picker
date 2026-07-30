@@ -25,9 +25,11 @@ function FighterProfile() {
     return (
         <div className="fighter-profile">
             <div className="fighter-header">
-                <h1>{fighter.firstName} {fighter.lastName}</h1>
-                <p>{fighter.wins}-{fighter.losses ?? 0}-{fighter.noContests ?? 0}</p>
-                <h2>{fighter.weightClass}</h2>
+                <div>
+                    <h1>{fighter.firstName} {fighter.lastName}</h1>
+                    <h2>{fighter.weightClass}</h2>
+                </div>
+                <h2>{fighter.careerWins} - {fighter.careerLosses} - {fighter.careerDraws}</h2>
             </div>
             <div className="fighter-content-wrap">
                 <div className="fighter-summary">

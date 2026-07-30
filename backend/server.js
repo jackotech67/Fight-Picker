@@ -47,7 +47,11 @@ app.get("/fighters", async (req, res) => {
             takedowns_per_15_min,
             takedown_accuracy,
             takedown_defence,
-            submissions_per_15_min
+            submissions_per_15_min,
+            career_wins AS "careerWins",
+            career_losses As "careerLosses",
+            career_draws AS "careerDraws",
+            career_no_contests AS "careerNoContests"
         FROM fighters
         `
     );
@@ -84,14 +88,18 @@ app.get("/fighters/:id", async (req, res) => {
                 reach,
                 stance,
                 age,
-                strikes_per_min,
-                striking_accuracy,
-                strikes_absorbed_per_min,
-                striking_defence,
-                takedowns_per_15_min, 
-                takedown_accuracy,
-                takedown_defence,
-                submissions_per_15_min
+                strikes_per_min AS "strikesPerMin",
+                striking_accuracy AS "strikingAccuracy",
+                strikes_absorbed_per_min AS "strikesAbsorbedPerMin",
+                striking_defence AS "strikingDefence",
+                takedowns_per_15_min AS "takedownsPer15Min",
+                takedown_accuracy AS "takedownAccuracy",
+                takedown_defence AS "takedownDefence",
+                submissions_per_15_min AS "submissionsPer15Min",
+                career_wins AS "careerWins",
+                career_losses AS "careerLosses",
+                career_draws AS "careerDraws",
+                career_no_contests AS "careerNoContests"
             FROM fighters
             WHERE id = $1
             `,
@@ -175,7 +183,19 @@ app.post("/fighters", async (req, res) => {
         height, 
         reach, 
         stance,
-        age
+        age,
+        careerWins,
+        careerLosses,
+        careerDraws,
+        careerNoContests,
+        strikesPerMin,
+        strikingAccuracy,
+        strikesAbsorbedPerMin,
+        strikingDefence,
+        takedownsPer15Min,
+        takedownAccuracy,
+        takedownDefence,
+        submissionsPer15Min
     } = req.body;
 
     // validate submitted data
@@ -208,9 +228,21 @@ app.post("/fighters", async (req, res) => {
             height,
             reach, 
             stance,
-            age
-            )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+            age,    
+            career_wins,
+            career_losses,
+            career_draws,
+            career_no_contests,
+            strikes_per_min,
+            striking_accuracy,
+            strikes_absorbed_per_min,
+            striking_defence,
+            takedowns_per_15_min,
+            takedown_accuracy,
+            takedown_defence,
+            submissions_per_15_min
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22)
         RETURNING
             id,
             first_name AS "firstName",
@@ -222,7 +254,19 @@ app.post("/fighters", async (req, res) => {
             height, 
             reach,
             stance,
-            age    
+            age,
+            career_wins AS "careerWins",
+            career_losses AS "careerLosses",
+            career_draws AS "careerDraws",
+            career_no_contests AS "careerNoContests",
+            strikes_per_min AS "strikesPerMin",
+            striking_accuracy AS "strikingAccuracy",
+            strikes_absorbed_per_min AS "strikesAbsorbedPerMin",
+            striking_defence AS "strikingDefence",
+            takedowns_per_15_min AS "takedownsPer15Min",
+            takedown_accuracy AS "takedownAccuracy",
+            takedown_defence AS "takedownDefence",
+            submissions_per_15_min AS "submissionsPer15Min"
         `,
         [
             firstName,
@@ -234,7 +278,19 @@ app.post("/fighters", async (req, res) => {
             height,
             reach,
             stance, 
-            age
+            age,
+            careerWins,
+            careerLosses,
+            careerDraws,
+            careerNoContests,
+            strikesPerMin,
+            strikingAccuracy,
+            strikesAbsorbedPerMin,
+            strikingDefence,
+            takedownsPer15Min,
+            takedownAccuracy,
+            takedownDefence,
+            submissionsPer15Min
         ]
     );
 
@@ -300,7 +356,19 @@ app.put("/fighters/:id", async (req, res) => {
             height,
             reach,
             stance,
-            age
+            age,
+            careerWins,
+            careerLosses,
+            careerDraws,
+            careerNoContests,
+            strikesPerMin,
+            strikingAccuracy,
+            strikesAbsorbedPerMin,
+            strikingDefence,
+            takedownsPer15Min,
+            takedownAccuracy,
+            takedownDefence,
+            submissionsPer15Min
         } = req.body; 
 
         // validate the data request before accessing the database
@@ -324,8 +392,20 @@ app.put("/fighters/:id", async (req, res) => {
                 height = $7,
                 reach = $8,
                 stance = $9,
-                age = $10
-            WHERE id = $11
+                age = $10,
+                career_wins = $11,
+                career_losses = $12,
+                career_draws = $13,
+                career_no_contests = $14,
+                strikes_per_min = $15,
+                striking_accuracy = $16,
+                strikes_absorbed_per_min = $17,
+                striking_defence = $18,
+                takedowns_per_15_min = $19,
+                takedown_accuracy = $20,
+                takedown_defence = $21,
+                submissions_per_15_min = $22
+            WHERE id = $23
             RETURNING
                 id, 
                 first_name AS "firstName",
@@ -337,7 +417,19 @@ app.put("/fighters/:id", async (req, res) => {
                 height,
                 reach,
                 stance,
-                age
+                age, 
+                career_wins AS "careerWins",
+                career_losses AS "careerLosses",
+                career_draws AS "careerDraws",
+                career_no_contests AS "careerNoContests",
+                strikes_per_min AS "strikesPerMin",
+                striking_accuracy AS "strikingAccuracy",
+                strikes_absorbed_per_min AS "strikesAbsorbedPerMin",
+                striking_defence AS "strikingDefence",
+                takedowns_per_15_min AS "takedownsPer15Min",
+                takedown_accuracy AS "takedownAccuracy",
+                takedown_defence AS "takedownDefence",
+                submissions_per_15_min AS "submissionsPer15Min"
             `,
             [
                 firstName, 
@@ -350,7 +442,19 @@ app.put("/fighters/:id", async (req, res) => {
                 reach,
                 stance,
                 age,
-                id,
+                careerWins,
+                careerLosses,
+                careerDraws,
+                careerNoContests,
+                strikesPerMin,
+                strikingAccuracy,
+                strikesAbsorbedPerMin,
+                strikingDefence,
+                takedownsPer15Min,
+                takedownAccuracy,
+                takedownDefence,
+                submissionsPer15Min,
+                id
             ]
         );
 
