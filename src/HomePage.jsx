@@ -24,6 +24,24 @@ function HomePage() {
         .then((data) => setFighters(data)); // data is now fighters array. updates react state
     }, []);
 
+    useEffect(() => {
+        const token = sessionStorage.getItem("adminToken");
+
+        if (!token) return;
+
+        fetch("http://localhost:3000/admin/check", {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        })
+        .then((response) => {
+            if (!response.ok) {
+                sessionStorage.removeItem("adminToken");
+                setIsAdmin(false);
+            }
+        });
+    }, []);
+
     
     const [selectedWeightClass, setSelectedWeightClass] = useState("All");
     const filteredFighters = selectedWeightClass === "All"
@@ -34,7 +52,9 @@ function HomePage() {
     const [fighter2, setFighter2] = useState(null);
     const [showComparison, setShowComparison] = useState(false);
 
-    const [isAdmin, setIsAdmin] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(
+        () => sessionStorage.getItem("adminToken") !== null
+    );
     const [adminMessage, setAdminMessage] = useState("");
 
     const [highlightStats, setHighlightStats] = useState(false);
@@ -43,14 +63,20 @@ function HomePage() {
 
         // delete the fighter from the database
         fetch(`http://localhost:3000/fighters/${idToDelete}`, {
-        method: "DELETE",
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${sessionStorage.getItem("adminToken")}`
+            }
         })
 
         // remove the deleted fighter from state
-        .then(() => {
-        setFighters(
-            fighters.filter((fighter) => fighter.id !== idToDelete)
-        );
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Failed to delete fighter");
+            }
+            setFighters(
+                fighters.filter((fighter) => fighter.id !== idToDelete)
+            );
         });
     }
 
@@ -72,19 +98,35 @@ function HomePage() {
         setShowComparison(false);
     }
 
-    function unlockAdmin() {
-        const code = prompt("Enter admin code");
-        if (code === "password") {
-        setIsAdmin(true);
-        setAdminMessage("");
+    async function unlockAdmin(){
+        const password = prompt("Enter admin password");
+
+        if (password == null) {
+            return;
         }
-        else {
-        setAdminMessage("Access denied. Nice try Dana")
+
+        const response = await fetch("http://localhost:3000/admin/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ password })
+        });
+        const data = await response.json();
+        
+        if (response.ok) {
+            sessionStorage.setItem("adminToken", data.token);
+            setIsAdmin(true);
+            setAdminMessage("");
+        } else {
+            setAdminMessage("Invalid password")
         }
     }
 
     function lockAdmin() {
+        sessionStorage.removeItem("adminToken");
         setIsAdmin(false);
+        setAdminMessage("");
     }
 
     function getWinner(value1, value2) {

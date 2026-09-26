@@ -41,14 +41,14 @@ function FighterProfile() {
                 </div>
                 <div className="fighter-stats">
                     <h2>Advanced stats</h2>
-                    <p>Strikes per min: {fighter.strikes_per_min}</p>
-                    <p>Striking accuracy: {fighter.striking_accuracy}%</p>
-                    <p>Strikes absorbed per min: {fighter.strikes_absorbed_per_min}</p>
-                    <p>Striking defence: {fighter.striking_defence}%</p>
-                    <p>Takedowns per 15 min: {fighter.takedowns_per_15_min}</p>
-                    <p>Takedown accuracy: {fighter.takedown_accuracy}%</p>
-                    <p>Takedown defence: {fighter.takedown_defence}%</p>
-                    <p>Submissions per 15 min: {fighter.submissions_per_15_min}</p>
+                    <p>Strikes per min: {fighter.strikesPerMin}</p>
+                    <p>Striking accuracy: {fighter.strikingAccuracy}%</p>
+                    <p>Strikes absorbed per min: {fighter.strikesAbsorbedPerMin}</p>
+                    <p>Striking defence: {fighter.strikingDefence}%</p>
+                    <p>Takedowns per 15 min: {fighter.takedownsPer15Min}</p>
+                    <p>Takedown accuracy: {fighter.takedownAccuracy}%</p>
+                    <p>Takedown defence: {fighter.takedownDefence}%</p>
+                    <p>Submissions per 15 min: {fighter.submissionsPer15Min}</p>
                 </div>
                 <div className="fighter-notes">
                     <h2>Notes</h2>

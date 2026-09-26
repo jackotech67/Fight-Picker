@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const { Pool } = require("pg");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 app.use(express.json()); 
 app.use(cors());
@@ -21,7 +23,50 @@ const pool = new Pool({
     database: "fighter_picker",
 });
 
+app.post("/admin/login", async (req, res) => {
+    const { password } = req.body;
 
+    const passwordMatches = await bcrypt.compare(
+        password,
+        process.env.ADMIN_PASSWORD_HASH
+    );
+    if (!passwordMatches) {
+        return res.status(401).json({
+            message: "Invalid password"
+        });
+    }
+    const token = jwt.sign(
+        { role : "admin" },
+        process.env.JWT_SECRET,
+        { expiresIn: "2h" }
+    );
+    res.json({ token });
+});
+
+function verifyAdmin(req, res, next) {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+        return res.status(401).json({
+            message: "No token provided"
+        });
+    }
+    const token = authHeader.split(" ")[1];
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.admin = decoded;
+        next();
+    } catch (error) {
+        return res.status(401).json({
+            message: "Invalid or expired token"
+        });
+    }
+}
+
+app.get("/admin/check", verifyAdmin, (req, res) => {
+    res.json({ authenticated: true});
+});
 
 app.get("/fighters", async (req, res) => {
     try {
@@ -170,7 +215,7 @@ app.get("/fighters/:id/history", async (req, res) => {
     }
 });
 
-app.post("/fighters", async (req, res) => {
+app.post("/fighters", verifyAdmin, async (req, res) => {
     try {
         // extract fighter data from the request body
         const {
@@ -307,7 +352,7 @@ app.post("/fighters", async (req, res) => {
     }
 });
 
-app.delete("/fighters/:id", async (req, res) => {
+app.delete("/fighters/:id", verifyAdmin, async (req, res) => {
     try {
         // extract fighter id from the request url
         const { id } = req.params;
@@ -341,7 +386,7 @@ app.delete("/fighters/:id", async (req, res) => {
     }
 });
 
-app.put("/fighters/:id", async (req, res) => {
+app.put("/fighters/:id", verifyAdmin, async (req, res) => {
     try {
         // extract fighter id from the url and updated data from request
         const { id } = req.params; 

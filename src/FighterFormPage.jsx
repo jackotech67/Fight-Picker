@@ -81,6 +81,7 @@ function FighterFormPage({ mode, fighterId}) {
     }, [mode, fighterId]);
 
     function saveFighter() {
+        console.log("saveFighter called")
 
         if (firstName.trim() === "" || lastName.trim() === "") {
             alert("Please enter a first and last name");
@@ -106,6 +107,7 @@ function FighterFormPage({ mode, fighterId}) {
             method,
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${sessionStorage.getItem("adminToken")}`
             },
             body: JSON.stringify({
                 firstName,
@@ -142,6 +144,12 @@ function FighterFormPage({ mode, fighterId}) {
         });
     }
 
+    const token = sessionStorage.getItem("adminToken");
+
+    if (!token) {
+        return <p>Admin access required.</p>
+    }
+
     return (
         <div className="add-fighter-wrapper">
             <h1>{mode === "add" ? "Add Fighter" : "Edit Fighter"}</h1>
@@ -160,7 +168,7 @@ function FighterFormPage({ mode, fighterId}) {
                 setKnockouts={setKnockouts}
                 decisions={decisions}
                 setDecisions={setDecisions}
-                editFighter={saveFighter}
+                saveFighter={saveFighter}
                 mode={mode}
                 height={height}
                 setHeight={setHeight}
