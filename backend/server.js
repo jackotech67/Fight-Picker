@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -20,7 +22,7 @@ const weightClasses = [
 ];
 
 const pool = new Pool({
-    database: "fighter_picker",
+    connectionString: process.env.DATABASE_URL,
 });
 
 app.post("/admin/login", async (req, res) => {
@@ -523,6 +525,7 @@ app.put("/fighters/:id", verifyAdmin, async (req, res) => {
     }
 })
 
-app.listen(3000, () => {
-    console.log("Server listening on port 3000");
+const PORT = process.env.PORT  ||  3000;
+app.listen(PORT, () => {
+    console.log(`Server listening on port ${PORT}`);
 });

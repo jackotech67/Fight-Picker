@@ -1,5 +1,7 @@
-import { useState, UseEffect, useEffect } from "react";
-import { data, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 function FighterProfile() {
     const { id } = useParams();
@@ -9,11 +11,11 @@ function FighterProfile() {
     const [history, setHistory] = useState([]);
 
     useEffect(() => {
-        fetch(`http://localhost:3000/fighters/${id}`)
+        fetch(`${API_URL}/fighters/${id}`)
             .then((response) => response.json())
             .then((data) => setFighter(data));
         
-        fetch(`http://localhost:3000/fighters/${id}/history`)
+        fetch(`${API_URL}/fighters/${id}/history`)
             .then((response) => response.json())
             .then((data) => setHistory(data));
     }, [id]);

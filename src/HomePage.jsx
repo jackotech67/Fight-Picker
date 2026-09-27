@@ -3,6 +3,8 @@ import FighterCard from './FighterCard';
 import Navbar from './Navbar';
 import { useState, useEffect } from 'react';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const weightClasses = [
     "Flyweight",
     "Bantamweight",
@@ -19,7 +21,7 @@ function HomePage() {
     const [fighters, setFighters] = useState([]);
 
     useEffect(() => {
-        fetch("http://localhost:3000/fighters") // GET request to backend
+        fetch(`${API_URL}/fighters`) // GET request to backend
         .then((response) => response.json()) // converts backend JSON response into JS object
         .then((data) => setFighters(data)); // data is now fighters array. updates react state
     }, []);
@@ -29,7 +31,7 @@ function HomePage() {
 
         if (!token) return;
 
-        fetch("http://localhost:3000/admin/check", {
+        fetch(`${API_URL}/admin/check`, {
             headers: {
                 "Authorization": `Bearer ${token}`
             }
@@ -62,7 +64,7 @@ function HomePage() {
     function deleteFighter(idToDelete) {
 
         // delete the fighter from the database
-        fetch(`http://localhost:3000/fighters/${idToDelete}`, {
+        fetch(`${API_URL}/fighters/${idToDelete}`, {
             method: "DELETE",
             headers: {
                 "Authorization": `Bearer ${sessionStorage.getItem("adminToken")}`
@@ -105,7 +107,7 @@ function HomePage() {
             return;
         }
 
-        const response = await fetch("http://localhost:3000/admin/login", {
+        const response = await fetch(`${API_URL}/admin/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AddFighterForm from "./AddFighterForm";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function FighterFormPage({ mode, fighterId}) {
 
     const weightClasses = [
@@ -47,7 +49,7 @@ function FighterFormPage({ mode, fighterId}) {
     useEffect(() => {
         if (mode !== "edit") return;
 
-        fetch(`http://localhost:3000/fighters/${fighterId}`)
+        fetch(`${API_URL}/fighters/${fighterId}`)
             .then((response) => response.json())
             .then((fighter) => { 
 
@@ -98,8 +100,8 @@ function FighterFormPage({ mode, fighterId}) {
 
         const url =
             mode === "edit"
-            ? `http://localhost:3000/fighters/${fighterId}`
-            : "http://localhost:3000/fighters";
+            ? `${API_URL}/fighters/${fighterId}`
+            : `${API_URL}/fighters`;
             
         const method = mode === "edit" ? "PUT" : "POST";
 
