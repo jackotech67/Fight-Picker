@@ -1,68 +1,38 @@
-## Getting Started
+# Fighter Picker
 
-1. Clone the repository
+A full-stack web application for comparing UFC fighters and exploring their statistics and fight history.
 
-```bash
-git clone <repo-url>
-```
+🔗 **Live Site:** [Fighter Picker](https://fighter-picker.onrender.com)
 
-2. Install dependencies
+## Features
 
-```bash
-npm install
-```
+- Browse and filter UFC fighters by weight class
+- Compare two fighters across general, career, and advanced statistics
+- Highlight statistical advantages between fighters
+- View individual fighter profiles and fight history
+- Secure admin authentication using JWT
+- Add, edit, and delete fighters through the admin interface
+- Persistent fighter and fight data stored in PostgreSQL
+- Responsive user interface
 
-3. Start the frontend
+## Technologies
 
-```bash
-npm run dev
-```
+- React
+- JavaScript
+- CSS
+- Node.js
+- Express
+- PostgreSQL
+- REST API
+- JWT Authentication
+- bcrypt
 
-4. Start the backend
+## Deployment
 
-```bash
-cd backend
-npm install
-npm start
-```
+- Frontend hosted on Render
+- Backend API hosted on Render
+- PostgreSQL database hosted on Neon
 
-5. Ensure PostgreSQL is running.
+## Acknowledgements
 
-## Fighter Picker
-
-Overview
-
-A full stack web application built to learn about modern web development, driven by a love for mixed martial arts and coding. This is an active project under continuous development with many cool ideas coming soon.
-
-Current features:
-* View library of fighters
-* Add / edit / delete fighters
-* Weightclass filter
-* Basic fighter comparison
-
-Cool ideas coming soon:
-* User authentication and admin controls
-* Fighter profile pages
-* Advanced fighter statistics
-* Upcoming UFC events
-* Fight prediction tools
-* Fighter search
-* Responsive UI improvements
-
-## Tech stack
-
-Frontend
-* React
-* CSS
-* JavaScript
-* Vite
-  
-Backend
-* Node.js
-* Express
-  
-Database
-* PostgreSQL
-
-Other
-* REST API
+Development support provided by [OpenAI ChatGPT](https://chatgpt.com/) — used throughout development for learning, debugging, and technical guidance.
