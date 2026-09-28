@@ -8,7 +8,12 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 app.use(express.json()); 
-app.use(cors());
+app.use(cors({
+    origin: [
+        "http://localhost:5173",
+        "https://fighter-picker.onrender.com"
+    ]
+}));
 
 const weightClasses = [
     "Flyweight",
