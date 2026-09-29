@@ -83,7 +83,8 @@
 }
 .comparison-table-content {
   border-collapse: collapse;
-  min-width: 400px;
+  width: 100%;
+  max-width: 600px;
 }
 .comparison-table-content th,
 .comparison-table-content td {
@@ -226,3 +227,28 @@
   margin-bottom: 0;
   font-style: italic;
 }
+
+@media (max-width: 600px) {
+  .fighter-list {
+    grid-template-columns: 1fr;
+  }
+  .fighter-card {
+    width: 50%;
+  }
+
+  .fighter-content-wrap {
+    flex-direction: column;
+  }
+  .fighter-summary, .fighter-stats, .fighter-notes {
+    width: 100%;
+  }
+  .fighter-history {
+    width: 100%;
+    overflow-x: auto;
+  }
+  .fight-history-table {
+    min-width: 700px;
+  }
+  
+}
+
