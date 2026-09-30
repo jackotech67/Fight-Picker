@@ -238,75 +238,75 @@ function HomePage() {
                                     <th colSpan={3}>Advanced</th>
                                 </tr>
                                 <tr>
-                                    <td className={getWinner(fighter1.strikes_per_min, fighter2.strikes_per_min)}>
-                                        {fighter1.strikes_per_min}
+                                    <td className={getWinner(fighter1.strikesPerMin, fighter2.strikesPerMin)}>
+                                        {fighter1.strikesPerMin}
                                     </td>
                                     <td>Strikes per min</td>
-                                    <td className={getWinner(fighter2.strikes_per_min, fighter1.strikes_per_min)}>
-                                        {fighter2.strikes_per_min}
+                                    <td className={getWinner(fighter2.strikesPerMin, fighter1.strikesPerMin)}>
+                                        {fighter2.strikesPerMin}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td className={getWinner(fighter1.striking_accuracy, fighter2.striking_accuracy)}>
-                                        {fighter1.striking_accuracy}
+                                    <td className={getWinner(fighter1.strikingAccuracy, fighter2.strikingAccuracy)}>
+                                        {fighter1.strikingAccuracy}
                                     </td>
                                     <td>Striking accuracy %</td>
-                                    <td className={getWinner(fighter2.striking_accuracy, fighter1.striking_accuracy)}>
-                                        {fighter2.striking_accuracy}
+                                    <td className={getWinner(fighter2.strikingAccuracy, fighter1.strikingAccuracy)}>
+                                        {fighter2.strikingAccuracy}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td className={getLoser(fighter1.strikes_absorbed_per_min, fighter2.strikes_absorbed_per_min)}>
-                                        {fighter1.strikes_absorbed_per_min}
+                                    <td className={getLoser(fighter1.strikesAbsorbedPerMin, fighter2.strikesAbsorbedPerMin)}>
+                                        {fighter1.strikesAbsorbedPerMin}
                                     </td>
                                     <td>Strikes absorbed per min</td>
-                                    <td className={getLoser(fighter2.strikes_absorbed_per_min, fighter1.strikes_absorbed_per_min)}>
-                                        {fighter2.strikes_absorbed_per_min}
+                                    <td className={getLoser(fighter2.strikesAbsorbedPerMin, fighter1.strikesAbsorbedPerMin)}>
+                                        {fighter2.strikesAbsorbedPerMin}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td className={getWinner(fighter1.striking_defence, fighter2.striking_defence)}>
-                                        {fighter1.striking_defence}
+                                    <td className={getWinner(fighter1.strikingDefence, fighter2.strikingDefence)}>
+                                        {fighter1.strikingDefence}
                                     </td>
                                     <td>Striking defence %</td>
-                                    <td className={getWinner(fighter2.striking_defence, fighter1.striking_defence)}>
-                                        {fighter2.striking_defence}
+                                    <td className={getWinner(fighter2.strikingDefence, fighter1.strikingDefence)}>
+                                        {fighter2.strikingDefence}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td className={getWinner(fighter1.takedowns_per_15_min, fighter2.takedowns_per_15_min)}>
-                                        {fighter1.takedowns_per_15_min}
+                                    <td className={getWinner(fighter1.takedownsPer15Min, fighter2.takedownsPer15Min)}>
+                                        {fighter1.takedownsPer15Min}
                                     </td>
                                     <td>Takedowns per 15 min</td>
-                                    <td className={getWinner(fighter2.takedowns_per_15_min, fighter1.takedowns_per_15_min)}>
-                                        {fighter2.takedowns_per_15_min}
+                                    <td className={getWinner(fighter2.takedownsPer15Min, fighter1.takedownsPer15Min)}>
+                                        {fighter2.takedownsPer15Min}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td className={getWinner(fighter1.takedown_accuracy, fighter2.takedown_accuracy)}>
-                                        {fighter1.takedown_accuracy}
+                                    <td className={getWinner(fighter1.takedownAccuracy, fighter2.takedownAccuracy)}>
+                                        {fighter1.takedownAccuracy}
                                     </td>
                                     <td>Takedown accuracy %</td>
-                                    <td className={getWinner(fighter2.takedown_accuracy, fighter1.takedown_accuracy)}>
-                                        {fighter2.takedown_accuracy}
+                                    <td className={getWinner(fighter2.takedownAccuracy, fighter1.takedownAccuracy)}>
+                                        {fighter2.takedownAccuracy}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td className={getWinner(fighter1.takedown_defence, fighter2.takedown_defence)}>
-                                        {fighter1.takedown_defence}
+                                    <td className={getWinner(fighter1.takedownDefence, fighter2.takedownDefence)}>
+                                        {fighter1.takedownDefence}
                                     </td>
                                     <td>Takedown defence %</td>
-                                    <td className={getWinner(fighter2.takedown_defence, fighter1.takedown_defence)}>
-                                        {fighter2.takedown_defence}
+                                    <td className={getWinner(fighter2.takedownDefence, fighter1.takedownDefence)}>
+                                        {fighter2.takedownDefence}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td className={getWinner(fighter1.submissions_per_15_min, fighter2.submissions_per_15_min)}>
-                                        {fighter1.submissions_per_15_min}
+                                    <td className={getWinner(fighter1.submissionsPer15Min, fighter2.submissionsPer15Min)}>
+                                        {fighter1.submissionsPer15Min}
                                     </td>
                                     <td>Submissions per 15 min</td>
-                                    <td className={getWinner(fighter2.submissions_per_15_min, fighter1.submissions_per_15_min)}>
-                                        {fighter2.submissions_per_15_min}
+                                    <td className={getWinner(fighter2.submissionsPer15Min, fighter1.submissionsPer15Min)}>
+                                        {fighter2.submissionsPer15Min}
                                     </td>
                                 </tr>
 
@@ -315,30 +315,30 @@ function HomePage() {
                                     <th colSpan={3}>Career</th>
                                 </tr>
                                 <tr>
-                                    <td className={getWinner(fighter1.submissions, fighter2.submissions)}>
-                                        {fighter1.submissions}
+                                    <td className={getWinner(fighter1.submissionWins, fighter2.submissionWins)}>
+                                        {fighter1.submissionWins}
                                     </td>
                                     <td>Submissions</td>
-                                    <td className={getWinner(fighter2.submissions, fighter1.submissions)}>
-                                        {fighter2.submissions}
+                                    <td className={getWinner(fighter2.submissionWins, fighter1.submissionWins)}>
+                                        {fighter2.submissionWins}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td className={getWinner(fighter1.knockouts, fighter2.knockouts)}>
-                                        {fighter1.knockouts}
+                                    <td className={getWinner(fighter1.knockoutWins, fighter2.knockoutWins)}>
+                                        {fighter1.knockoutWins}
                                     </td>
                                     <td>Knockouts</td>
-                                    <td className={getWinner(fighter2.knockouts, fighter1.knockouts)}>
-                                        {fighter2.knockouts}
+                                    <td className={getWinner(fighter2.knockoutWins, fighter1.knockoutWins)}>
+                                        {fighter2.knockoutWins}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td className={getWinner(fighter1.decisions, fighter2.decisions)}>
-                                        {fighter1.decisions}
+                                    <td className={getWinner(fighter1.decisionWins, fighter2.decisionWins)}>
+                                        {fighter1.decisionWins}
                                     </td>
                                     <td>Decisions</td>
-                                    <td className={getWinner(fighter2.decisions, fighter1.decisions)}>
-                                        {fighter2.decisions}
+                                    <td className={getWinner(fighter2.decisionWins, fighter1.decisionWins)}>
+                                        {fighter2.decisionWins}
                                     </td>
                                 </tr>
                             </tbody>

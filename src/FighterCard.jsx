@@ -19,9 +19,9 @@ function FighterCard ({
             <p>{fighter.weightClass}</p>
 
             <div className="fighter-record">
-                <p>Subs: {fighter.submissions}</p>
-                <p>KOs: {fighter.knockouts}</p>
-                <p>Decisions: {fighter.decisions}</p>
+                <p>Subs: {fighter.submissionWins}</p>
+                <p>KOs: {fighter.knockoutWins}</p>
+                <p>Decisions: {fighter.decisionWins}</p>
             </div>
 
             <div className="select-button">

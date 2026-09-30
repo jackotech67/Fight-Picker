@@ -10,9 +10,9 @@ function AddFighterForm({
     careerLosses, setCareerLosses,
     careerDraws, setCareerDraws,
     careerNoContests, setCareerNoContests,
-    submissions, setSubmissions,
-    knockouts, setKnockouts, 
-    decisions, setDecisions,
+    submissionWins, setSubmissionWins,
+    knockoutWins, setKnockoutWins, 
+    decisionWins, setDecisionWins,
     strikesPerMin, setStrikesPerMin,
     strikingAccuracy, setStrikingAccuracy,
     strikesAbsorbedPerMin, setStrikesAbsorbedPerMin,
@@ -61,7 +61,7 @@ function AddFighterForm({
                 <div className="fighter-general-info">
                     <h4>General *</h4>
                     <div className="form-row">
-                        <label htmlFor="height">Height (cm):</label>
+                        <label htmlFor="height">Height (in):</label>
                         <input
                             type="number"
                             value={height}
@@ -137,24 +137,24 @@ function AddFighterForm({
                         <label htmlFor="submissions">Submissions:</label>
                         <input 
                             type="number"
-                            value={submissions}
-                            onChange={(e) => setSubmissions(Number(e.target.value))}
+                            value={submissionWins}
+                            onChange={(e) => setSubmissionWins(Number(e.target.value))}
                         />
                     </div>
                     <div className="form-row">
                         <label htmlFor="knockouts">Knockouts:</label>
                         <input 
                             type="number"
-                            value={knockouts}
-                            onChange={(e) => setKnockouts(Number(e.target.value))}
+                            value={knockoutWins}
+                            onChange={(e) => setKnockoutWins(Number(e.target.value))}
                         />
                     </div>
                     <div className="form-row">
                         <label htmlFor="decisions">Decisions:</label>
                         <input 
                             type="number"
-                            value={decisions}
-                            onChange={(e) => setDecisions(Number(e.target.value))}
+                            value={decisionWins}
+                            onChange={(e) => setDecisionWins(Number(e.target.value))}
                         />
                     </div>
                 </div>

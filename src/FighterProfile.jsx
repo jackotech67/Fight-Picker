@@ -36,7 +36,7 @@ function FighterProfile() {
             <div className="fighter-content-wrap">
                 <div className="fighter-summary">
                     <h2>Profile</h2>
-                    <p>Height: {fighter.height} cm</p>
+                    <p>Height: {fighter.height}"</p>
                     <p>Reach: {fighter.reach}"</p>
                     <p>Stance: {fighter.stance}</p>
                     <p>Age: {fighter.age}</p>
@@ -75,16 +75,16 @@ function FighterProfile() {
                     </thead>
                     <tbody>
                         {history.map((fight) => (
-                            <tr key={fight.fight_id}>
-                                <td>{fight.is_winner ? "W" : "L"}</td>
+                            <tr key={fight.bout_id}>
+                                <td>{fight.outcome === "win" ? "W" : "L"}</td>
                                 <td>{fight.name}</td>
                                 <td>{fight.method}</td>
-                                <td>{fight.round}</td>
-                                <td>{fight.time}</td>
+                                <td>{fight.result_round}</td>
+                                <td>{fight.result_time}</td>
                                 <td>{fight.knockdowns}</td>
-                                <td>{fight.strikes}</td>
-                                <td>{fight.takedowns}</td>
-                                <td>{fight.submissions}</td>
+                                <td>{fight.total_strikes_landed}</td>
+                                <td>{fight.takedowns_landed}</td>
+                                <td>{fight.submission_attempts}</td>
                             </tr>
                         ))}
                     </tbody>

@@ -30,6 +30,26 @@ const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
 });
 
+app.get("/cito-test", async (req, res) => {
+    try {
+        const response = await fetch(
+            "https://api.citoapi.com/api/v1/ufc/bouts?hasStats=true&includeStats=true",
+            {
+                headers: {
+                    "x-api-key": process.env.CITO_API_KEY
+                }
+            }
+        );
+
+        const data = await response.json();
+        console.dir(data.data[0], { depth: null });
+        res.json(data);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to fetch Cito data"});
+    }
+})
+
 app.post("/admin/login", async (req, res) => {
     const { password } = req.body;
 
@@ -85,21 +105,21 @@ app.get("/fighters", async (req, res) => {
             first_name AS "firstName",
             last_name AS "lastName",
             weight_class AS "weightClass",
-            submissions,
-            knockouts, 
-            decisions,
+            submission_wins AS "submissionWins",
+            knockout_wins AS "knockoutWins", 
+            decision_wins AS "decisionWins",
             height,
             reach,
             stance,
             age,
-            strikes_per_min,
-            striking_accuracy,
-            strikes_absorbed_per_min,
-            striking_defence,
-            takedowns_per_15_min,
-            takedown_accuracy,
-            takedown_defence,
-            submissions_per_15_min,
+            strikes_per_min AS "strikesPerMin",
+            striking_accuracy AS "strikingAccuracy",
+            strikes_absorbed_per_min AS "strikesAbsorbedPerMin",
+            striking_defence AS "strikingDefence",
+            takedowns_per_15_min AS "takedownsPer15Min",
+            takedown_accuracy AS "takedownAccuracy",
+            takedown_defence AS "takedownDefence",
+            submissions_per_15_min AS "submissionsPer15Min",
             career_wins AS "careerWins",
             career_losses As "careerLosses",
             career_draws AS "careerDraws",
@@ -133,9 +153,9 @@ app.get("/fighters/:id", async (req, res) => {
                 first_name AS "firstName",
                 last_name AS "lastName",
                 weight_class AS "weightClass",
-                submissions,
-                knockouts,
-                decisions,
+                submission_wins AS "submissionWins",
+                knockout_wins AS "knockoutWins",
+                decision_wins AS "decisionWins",
                 height,
                 reach,
                 stance,
@@ -161,9 +181,9 @@ app.get("/fighters/:id", async (req, res) => {
         const winsResult = await pool.query(
             `
             SELECT COUNT(*) AS wins
-            FROM fight_performance
+            FROM bout_performance
             WHERE fighter_id = $1
-                AND is_winner = TRUE
+                AND outcome = 'win'
             `,
             [id]
         )
@@ -191,23 +211,23 @@ app.get("/fighters/:id/history", async (req, res) => {
         const result = await pool.query(
             `
             SELECT
-                fight_performance.is_winner,
-                fights.id AS fight_id,
+                bout_performance.outcome,
+                bouts.id AS bout_id,
                 events.name,
                 events.event_date,
-                fights.method,
-                fights.round,
-                fights.time,
-                fight_performance.knockdowns,
-                fight_performance.strikes,
-                fight_performance.takedowns,
-                fight_performance.submissions
-            FROM fight_performance
-            JOIN fights
-            ON fight_performance.fight_id = fights.id
+                bouts.method,
+                bouts.result_round,
+                bouts.result_time,
+                bout_performance.knockdowns,
+                bout_performance.total_strikes_landed,
+                bout_performance.takedowns_landed,
+                bout_performance.submission_attempts
+            FROM bout_performance
+            JOIN bouts
+            ON bout_performance.bout_id = bouts.id
             JOIN events
-            ON fights.event_id = events.id
-            WHERE fight_performance.fighter_id = $1;
+            ON bouts.event_id = events.id
+            WHERE bout_performance.fighter_id = $1;
             `,
             [id]
         );
@@ -229,9 +249,9 @@ app.post("/fighters", verifyAdmin, async (req, res) => {
         firstName, 
         lastName,
         weightClass,
-        submissions, 
-        knockouts, 
-        decisions,
+        submissionWins, 
+        knockoutWins, 
+        decisionWins,
         height, 
         reach, 
         stance,
@@ -256,7 +276,7 @@ app.post("/fighters", verifyAdmin, async (req, res) => {
             message: "First and last name are required.",
         })
     }
-    if (submissions < 0 || knockouts < 0 || decisions < 0) {
+    if (submissionWins < 0 || knockoutWins < 0 || decisionWins < 0) {
         return res.status(400).json({
             message: "Stats cannot be negative"
         })
@@ -274,9 +294,9 @@ app.post("/fighters", verifyAdmin, async (req, res) => {
             first_name,
             last_name,
             weight_class,
-            submissions,
-            knockouts,
-            decisions,
+            submission_wins,
+            knockout_wins,
+            decision_wins,
             height,
             reach, 
             stance,
@@ -300,9 +320,9 @@ app.post("/fighters", verifyAdmin, async (req, res) => {
             first_name AS "firstName",
             last_name AS "lastName",
             weight_class AS "weightClass",
-            submissions,
-            knockouts, 
-            decisions,
+            submission_wins AS "submissionWins",
+            knockout_wins AS "knockoutWins", 
+            decision_wins AS "decisionWins",
             height, 
             reach,
             stance,
@@ -324,9 +344,9 @@ app.post("/fighters", verifyAdmin, async (req, res) => {
             firstName,
             lastName,
             weightClass,
-            submissions,
-            knockouts, 
-            decisions,
+            submissionWins,
+            knockoutWins, 
+            decisionWins,
             height,
             reach,
             stance, 
@@ -402,9 +422,9 @@ app.put("/fighters/:id", verifyAdmin, async (req, res) => {
             firstName,
             lastName,
             weightClass,
-            submissions,
-            knockouts,
-            decisions,
+            submissionWins,
+            knockoutWins,
+            decisionWins,
             height,
             reach,
             stance,
@@ -438,9 +458,9 @@ app.put("/fighters/:id", verifyAdmin, async (req, res) => {
                 first_name = $1, 
                 last_name = $2, 
                 weight_class = $3, 
-                submissions = $4, 
-                knockouts = $5, 
-                decisions = $6,
+                submission_wins = $4, 
+                knockout_wins = $5, 
+                decision_wins = $6,
                 height = $7,
                 reach = $8,
                 stance = $9,
@@ -463,9 +483,9 @@ app.put("/fighters/:id", verifyAdmin, async (req, res) => {
                 first_name AS "firstName",
                 last_name AS "lastName", 
                 weight_class AS "weightClass",
-                submissions, 
-                knockouts, 
-                decisions, 
+                submission_wins AS "submissionWins", 
+                knockout_wins AS "knockoutWins", 
+                decision_wins AS "decisionWins", 
                 height,
                 reach,
                 stance,
@@ -487,9 +507,9 @@ app.put("/fighters/:id", verifyAdmin, async (req, res) => {
                 firstName, 
                 lastName,
                 weightClass,
-                submissions,
-                knockouts,
-                decisions,
+                submissionWins,
+                knockoutWins,
+                decisionWins,
                 height,
                 reach,
                 stance,

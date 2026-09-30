@@ -19,9 +19,9 @@ function FighterFormPage({ mode, fighterId}) {
 
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
-    const [submissions, setSubmissions] = useState("");
-    const [knockouts, setKnockouts] = useState("");
-    const [decisions, setDecisions] = useState("");
+    const [submissionWins, setSubmissionWins] = useState("");
+    const [knockoutWins, setKnockoutWins] = useState("");
+    const [decisionWins, setDecisionWins] = useState("");
 
     const [weightClass, setWeightClass] = useState("");
 
@@ -57,9 +57,9 @@ function FighterFormPage({ mode, fighterId}) {
                 setLastName(fighter.lastName);
                 setWeightClass(fighter.weightClass);
 
-                setSubmissions(fighter.submissions);
-                setKnockouts(fighter.knockouts);
-                setDecisions(fighter.decisions);
+                setSubmissionWins(fighter.submissionWins);
+                setKnockoutWins(fighter.knockoutWins);
+                setDecisionWins(fighter.decisionWins);
 
                 setHeight(fighter.height);
                 setReach(fighter.reach);
@@ -93,7 +93,7 @@ function FighterFormPage({ mode, fighterId}) {
             alert("Please select a weight class");
         return;
         }
-        if (submissions < 0 || knockouts < 0 || decisions < 0){
+        if (submissionWins < 0 || knockoutWins < 0 || decisionWins < 0){
             alert("Stats cannot be negative");
         return;
         }
@@ -115,9 +115,9 @@ function FighterFormPage({ mode, fighterId}) {
                 firstName,
                 lastName,
                 weightClass,
-                submissions,
-                knockouts,
-                decisions,
+                submissionWins,
+                knockoutWins,
+                decisionWins,
                 height,
                 reach,
                 stance,
@@ -164,12 +164,12 @@ function FighterFormPage({ mode, fighterId}) {
                 weightClass={weightClass}
                 setWeightClass={setWeightClass}
                 weightClasses={weightClasses}
-                submissions={submissions}
-                setSubmissions={setSubmissions}
-                knockouts={knockouts}
-                setKnockouts={setKnockouts}
-                decisions={decisions}
-                setDecisions={setDecisions}
+                submissionWins={submissionWins}
+                setSubmissionWins={setSubmissionWins}
+                knockoutWins={knockoutWins}
+                setKnockoutWins={setKnockoutWins}
+                decisionWins={decisionWins}
+                setDecisionWins={setDecisionWins}
                 saveFighter={saveFighter}
                 mode={mode}
                 height={height}
