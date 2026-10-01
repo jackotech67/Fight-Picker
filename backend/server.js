@@ -181,7 +181,7 @@ app.get("/fighters/:id", async (req, res) => {
         const winsResult = await pool.query(
             `
             SELECT COUNT(*) AS wins
-            FROM bout_performance
+            FROM fighter_performance
             WHERE fighter_id = $1
                 AND outcome = 'win'
             `,
@@ -211,23 +211,32 @@ app.get("/fighters/:id/history", async (req, res) => {
         const result = await pool.query(
             `
             SELECT
-                bout_performance.outcome,
-                bouts.id AS bout_id,
+                fighter_performance.outcome,
+                bouts.id AS "boutId",
+                opponent.id AS "opponentId",
+                opponent.first_name AS "opponentFirstName",
+                opponent.last_name as "opponentLastName",
                 events.name,
-                events.event_date,
+                events.event_date AS "eventDate",
                 bouts.method,
-                bouts.result_round,
-                bouts.result_time,
-                bout_performance.knockdowns,
-                bout_performance.total_strikes_landed,
-                bout_performance.takedowns_landed,
-                bout_performance.submission_attempts
-            FROM bout_performance
+                bouts.result_round AS "resultRound",
+                bouts.result_time AS "resultTime",
+                fighter_performance.knockdowns,
+                fighter_performance.total_strikes_landed AS "totalStrikesLanded",
+                fighter_performance.takedowns_landed AS "takedownsLanded",
+                fighter_performance.submission_attempts AS "submissionAttempts"
+            FROM bout_performance AS fighter_performance
+            JOIN bout_performance as opponent_performance
+            ON fighter_performance.bout_id = opponent_performance.bout_id
+            AND fighter_performance.fighter_id != opponent_performance.fighter_id
             JOIN bouts
-            ON bout_performance.bout_id = bouts.id
+            ON fighter_performance.bout_id = bouts.id
             JOIN events
             ON bouts.event_id = events.id
-            WHERE bout_performance.fighter_id = $1;
+            JOIN fighters AS opponent
+            ON opponent_performance.fighter_id = opponent.id
+            WHERE fighter_performance.fighter_id = $1
+            ORDER BY events.event_date DESC;
             `,
             [id]
         );
@@ -240,6 +249,94 @@ app.get("/fighters/:id/history", async (req, res) => {
             message: "Internal server error"
         });
     }
+});
+
+app.get("/bouts/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const result = await pool.query(
+            `
+            SELECT
+                bouts.id,
+                events.name AS "eventName",
+                events.event_date AS "eventDate",
+                method,
+                result_round AS "resultRound",
+                result_time AS "resultTime"
+            FROM bouts
+            JOIN events
+            ON bouts.event_id = events.id
+            WHERE bouts.id = $1
+            `,
+            [id]
+        );
+
+        const fighterResult = await pool.query(
+            `
+            SELECT 
+                fighters.id,
+                fighters.first_name AS "firstName",
+                fighters.last_name AS "lastName",
+                bout_performance.outcome
+            FROM bout_performance
+            JOIN fighters
+            ON bout_performance.fighter_id = fighters.id
+            WHERE bout_performance.bout_id = $1
+            `,
+            [id]
+        );
+
+        const roundResult = await pool.query(
+            `
+            SELECT 
+                fighter_id AS "fighterId",
+                round,
+                knockdowns,
+                significant_strikes_landed AS "significantStrikesLanded",
+                significant_strikes_attempted AS "significantStrikesAttempted",
+                total_strikes_landed AS "totalStrikesLanded",
+                total_strikes_attempted AS "totalStrikesAttempted",
+                takedowns_landed AS "takedownsLanded",
+                takedowns_attempted AS "takedownsAttempted",
+                submission_attempts AS "submissionAttempts",
+                reversals,
+                control_time AS "controlTime",
+                head_strikes_landed AS "headStrikesLanded",
+                head_strikes_attempted AS "headStrikesAttempted",
+                body_strikes_landed AS "bodyStrikesLanded",
+                body_strikes_attempted AS "bodyStrikesAttempted",
+                leg_strikes_landed AS "legStrikesLanded",
+                leg_strikes_attempted AS "legStrikesAttempted",
+                distance_strikes_landed AS "distanceStrikesLanded",
+                distance_strikes_attempted AS "distanceStrikesAttempted",
+                clinch_strikes_landed AS "clinchStrikesLanded",
+                clinch_strikes_attempted AS "clinchStrikesAttempted",
+                ground_strikes_landed AS "groundStrikesLanded",
+                ground_strikes_attempted AS "groundStrikesAttempted"
+            FROM round_performance
+            WHERE bout_id = $1
+            ORDER BY round, fighter_id
+            `,
+            [id]
+        );
+
+        res.json({
+            ...result.rows[0],
+            fighters: fighterResult.rows,
+            rounds: roundResult.rows
+        });
+
+        
+        
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+
 });
 
 app.post("/fighters", verifyAdmin, async (req, res) => {

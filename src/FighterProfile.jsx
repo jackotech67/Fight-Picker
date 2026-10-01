@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -63,6 +63,7 @@ function FighterProfile() {
                     <thead>
                         <tr>
                             <th>Result</th>
+                            <th>Opponent</th>
                             <th>Event</th>
                             <th>Method</th>
                             <th>Round</th>
@@ -75,16 +76,21 @@ function FighterProfile() {
                     </thead>
                     <tbody>
                         {history.map((fight) => (
-                            <tr key={fight.bout_id}>
+                            <tr key={fight.boutId}>
                                 <td>{fight.outcome === "win" ? "W" : "L"}</td>
-                                <td>{fight.name}</td>
+                                <td>{fight.opponentFirstName} {fight.opponentLastName}</td>
+                                <td>
+                                    <Link to={`/bouts/${fight.boutId}`}>
+                                        {fight.name}
+                                    </Link>
+                                </td>
                                 <td>{fight.method}</td>
-                                <td>{fight.result_round}</td>
-                                <td>{fight.result_time}</td>
+                                <td>{fight.resultRound}</td>
+                                <td>{fight.resultTime}</td>
                                 <td>{fight.knockdowns}</td>
-                                <td>{fight.total_strikes_landed}</td>
-                                <td>{fight.takedowns_landed}</td>
-                                <td>{fight.submission_attempts}</td>
+                                <td>{fight.totalStrikesLanded}</td>
+                                <td>{fight.takedownsLanded}</td>
+                                <td>{fight.submissionAttempts}</td>
                             </tr>
                         ))}
                     </tbody>
