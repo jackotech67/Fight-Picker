@@ -1,12 +1,13 @@
 import './App.css'
 import FighterCard from './FighterCard';
 import Navbar from './Navbar';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const weightClasses = [
     "Flyweight",
+    "Women's Flyweight",
     "Bantamweight",
     "Featherweight",
     "Lightweight",
@@ -19,11 +20,16 @@ const weightClasses = [
 function HomePage() {
 
     const [fighters, setFighters] = useState([]);
+    const [upcomingFighters, setUpcomingFighters] = useState([]);
+    const comparisonRef = useRef(null);
 
     useEffect(() => {
-        fetch(`${API_URL}/fighters`) // GET request to backend
-        .then((response) => response.json()) // converts backend JSON response into JS object
-        .then((data) => setFighters(data)); // data is now fighters array. updates react state
+        fetch(`${API_URL}/fighters`) 
+        .then((response) => response.json()) 
+        .then((data) => setFighters(data)); 
+        fetch(`${API_URL}/fighters/upcoming`)
+        .then((response) => response.json())
+        .then((data) => setUpcomingFighters(data));
     }, []);
 
     useEffect(() => {
@@ -45,10 +51,26 @@ function HomePage() {
     }, []);
 
     
-    const [selectedWeightClass, setSelectedWeightClass] = useState("All");
-    const filteredFighters = selectedWeightClass === "All"
-        ? fighters
-        : fighters.filter((fighter) => fighter.weightClass === selectedWeightClass);
+    const [selectedWeightClass, setSelectedWeightClass] = useState("");
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const filteredFighters = fighters.filter((fighter) => {
+        const matchesWeightClass =
+            selectedWeightClass === "" ||
+            fighter.weightClass === selectedWeightClass;
+
+        const fullName = `${fighter.firstName} ${fighter.lastName}`.toLowerCase();
+
+        const matchesSearch =
+            fullName.includes(searchTerm.toLowerCase());
+
+        return matchesWeightClass && matchesSearch;
+    });
+
+    const displayedFighters =
+        selectedWeightClass === "" && searchTerm === ""
+            ? upcomingFighters
+            : filteredFighters;
 
     const [fighter1, setFighter1] = useState(null);
     const [fighter2, setFighter2] = useState(null);
@@ -63,15 +85,12 @@ function HomePage() {
 
     function deleteFighter(idToDelete) {
 
-        // delete the fighter from the database
         fetch(`${API_URL}/fighters/${idToDelete}`, {
             method: "DELETE",
             headers: {
                 "Authorization": `Bearer ${sessionStorage.getItem("adminToken")}`
             }
         })
-
-        // remove the deleted fighter from state
         .then((response) => {
             if (!response.ok) {
                 throw new Error("Failed to delete fighter");
@@ -90,7 +109,11 @@ function HomePage() {
         return
         }
         else if (fighter2 === null) {
-        setFighter2(fighter);
+            setFighter2(fighter);
+
+            comparisonRef.current?.scrollIntoView({
+                behavior: "smooth"
+            });
         }
     }
 
@@ -144,7 +167,7 @@ function HomePage() {
         }
         return className;
     }
-    function getLoser(value1, value2) { 
+    function getLoser(value1, value2) { {/* for inputs where higher value is bad */}
         let className = "";
         if (highlightStats === false) {
             return "";
@@ -156,7 +179,7 @@ function HomePage() {
             className = "winner";
         }
         return className;
-    } {/* for inputs where higher value is bad */}
+    } 
 
     return (
         <div>
@@ -167,7 +190,7 @@ function HomePage() {
             />
             <h1 className='title'>Fighter Picker</h1> 
 
-            <div className='comparison-wrapper'>
+            <div className='comparison-wrapper' ref={comparisonRef}>
                 <h2>Comparison</h2>
                 <p>
                     Fighter1: {fighter1 ? `${fighter1.firstName} ${fighter1.lastName}` : "None Selected"}
@@ -309,7 +332,6 @@ function HomePage() {
                                         {fighter2.submissionsPer15Min}
                                     </td>
                                 </tr>
-
                                 {/* Career */}
                                 <tr>
                                     <th colSpan={3}>Career</th>
@@ -348,25 +370,36 @@ function HomePage() {
                 )}
 
             </div> {/* comparison wrap */}
-
+                <input
+                    type="text"
+                    className="fighter-search"
+                    placeholder="Search fighters..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
                 <select 
                 className='select-weight-class-button'
                 value={selectedWeightClass}
                 onChange={(e) => setSelectedWeightClass(e.target.value)}
                 >
-                <option value="All">All Weight Classes</option>
+                <option value="">Next Event</option>
                 {weightClasses.map((weightClass) => (
                     <option key={weightClass} value={weightClass}>{weightClass}</option>
                 ))}
                 </select>
             <div className="fighter-list">
-                {filteredFighters.map((fighter) => (
+                {displayedFighters.map((fighter) => (
                 <FighterCard 
                     key={fighter.id} 
                     fighter={fighter}
                     deleteFighter={deleteFighter}
                     selectFighter={selectFighter}
                     isAdmin={isAdmin}
+                    selection={
+                        fighter.id === fighter1?.id ? "fighter-1" :
+                        fighter.id === fighter2?.id ? "fighter-2" :
+                        ""
+                    }
                 />
                 ))}
             </div>

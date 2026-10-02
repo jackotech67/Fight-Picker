@@ -77,7 +77,13 @@ function FighterProfile() {
                     <tbody>
                         {history.map((fight) => (
                             <tr key={fight.boutId}>
-                                <td>{fight.outcome === "win" ? "W" : "L"}</td>
+                                <td>
+                                    {
+                                    fight.outcome === "win" ? "W" : 
+                                    fight.outcome === "loss" ? "L" :
+                                    "-"
+                                    } 
+                                </td>
                                 <td>{fight.opponentFirstName} {fight.opponentLastName}</td>
                                 <td>
                                     <Link to={`/bouts/${fight.boutId}`}>

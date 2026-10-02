@@ -95,6 +95,44 @@ app.get("/admin/check", verifyAdmin, (req, res) => {
     res.json({ authenticated: true});
 });
 
+app.get("/fighters/upcoming", async (req, res) => {
+    try {
+        const result = await pool.query(
+            `
+            SELECT DISTINCT
+                fighters.id,
+                fighters.first_name AS "firstName",
+                fighters.last_name AS "lastName",
+                fighters.weight_class AS "weightClass",
+                fighters.submission_wins AS "submissionWins",
+                fighters.knockout_wins AS "knockoutWins",
+                fighters.decision_wins AS "decisionWins"
+            FROM events
+            JOIN bouts
+                ON bouts.event_id = events.id
+            JOIN bout_performance
+                ON bout_performance.bout_id = bouts.id
+            JOIN fighters
+                ON fighters.id = bout_performance.fighter_id
+            WHERE events.event_date = (
+                SELECT MIN(event_date)
+                FROM events
+                WHERE event_date >= CURRENT_DATE
+            )
+            ORDER BY fighters.last_name ASC
+            `
+        );
+        res.json(result.rows);
+
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+});
+
 app.get("/fighters", async (req, res) => {
     try {
         // retrieve all fighters from the database
@@ -181,7 +219,7 @@ app.get("/fighters/:id", async (req, res) => {
         const winsResult = await pool.query(
             `
             SELECT COUNT(*) AS wins
-            FROM fighter_performance
+            FROM bout_performance
             WHERE fighter_id = $1
                 AND outcome = 'win'
             `,
@@ -320,28 +358,21 @@ app.get("/bouts/:id", async (req, res) => {
             `,
             [id]
         );
-
         res.json({
             ...result.rows[0],
             fighters: fighterResult.rows,
             rounds: roundResult.rows
         });
-
-        
-        
     } catch (error) {
         console.error(error);
-
         res.status(500).json({
             message: "Internal server error"
         });
     }
-
 });
 
 app.post("/fighters", verifyAdmin, async (req, res) => {
     try {
-        // extract fighter data from the request body
         const {
         firstName, 
         lastName,
@@ -367,7 +398,6 @@ app.post("/fighters", verifyAdmin, async (req, res) => {
         submissionsPer15Min
     } = req.body;
 
-    // validate submitted data
     if (firstName.trim() === "" || lastName.trim() === "") {
         return res.status(400).json({
             message: "First and last name are required.",
@@ -384,7 +414,6 @@ app.post("/fighters", verifyAdmin, async (req, res) => {
         });
     }
 
-    // insert the new fighter into the database
     const result = await pool.query(
         `
         INSERT INTO fighters (
@@ -462,14 +491,9 @@ app.post("/fighters", verifyAdmin, async (req, res) => {
             submissionsPer15Min
         ]
     );
-
-    // return the newly created fighter
     res.status(201).json(result.rows[0]);
-
-    // handle unexpected server or database errors
     } catch (error) {
         console.error(error);
-        
         res.status(500).json({
             message: "Internal server error",
         });

@@ -52,6 +52,12 @@
 .fighter-card button {
   margin: 0.125rem;
 }
+.fighter-card.fighter-1 {
+  border: 3px solid blue;
+}
+.fighter-card.fighter-2 {
+  border: 3px solid red;
+}
 
 .comparison-wrapper {
   border: 1.5px solid black;
@@ -64,8 +70,13 @@
   margin: 0.125rem;
 }
 
+.fighter-search {
+  margin-left: 1rem;
+  padding: 0.4rem;
+}
 .select-weight-class-button {
   margin-left: 1rem;
+  height: 2rem;
 }
 .fighter-list {
   display: grid;

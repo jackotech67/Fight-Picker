@@ -5,11 +5,12 @@ function FighterCard ({
     fighter, 
     deleteFighter,
     selectFighter,
-    isAdmin
+    isAdmin,
+    selection
 }) {
     const navigate = useNavigate();
     return (
-        <div className="fighter-card">
+        <div className={`fighter-card ${selection}`}>
             <h2>
                 <Link to={`/fighter/${fighter.id}`}>
                     {fighter.firstName} {fighter.lastName}
