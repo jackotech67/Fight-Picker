@@ -6,6 +6,8 @@ const cors = require("cors");
 const { Pool } = require("pg");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const importUpcomingEvent = require("./importUpcomingEvent");
+const importPastEvent = require("./importPastEvent");
 
 app.use(express.json()); 
 app.use(cors({
@@ -93,6 +95,40 @@ function verifyAdmin(req, res, next) {
 
 app.get("/admin/check", verifyAdmin, (req, res) => {
     res.json({ authenticated: true});
+});
+
+app.post("/admin/import/upcoming", verifyAdmin, async (req, res) => {
+    try {
+        await importUpcomingEvent();
+
+        res.json({
+            message: "Upcoming event imported successfully"
+        });
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            message: "Failed to import upcoming event"
+        });
+    }
+});
+
+app.post("/admin/import/past", verifyAdmin, async (req, res) => {
+    try {
+        const { eventSlug } = req.body;
+
+        await importPastEvent(eventSlug);
+
+        res.json({
+            message: "Past event imported successfully"
+        });
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            message: "Failed to import past event"
+        });
+    }
 });
 
 app.get("/fighters/upcoming", async (req, res) => {
