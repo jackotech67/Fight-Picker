@@ -135,7 +135,6 @@ app.get("/fighters/upcoming", async (req, res) => {
 
 app.get("/fighters", async (req, res) => {
     try {
-        // retrieve all fighters from the database
         const result = await pool.query(
         `
         SELECT 
@@ -166,13 +165,9 @@ app.get("/fighters", async (req, res) => {
         `
     );
 
-    // return the list of fighters
     res.json(result.rows);
-
-    // handle unexpected server or database errors
     } catch (error) {
         console.error(error);
-        
         res.status(500).json({
             message: "Internal server error"
         })
@@ -225,17 +220,12 @@ app.get("/fighters/:id", async (req, res) => {
             `,
             [id]
         )
-
-        // return the fighter
         res.json({
             ...result.rows[0],
             wins: Number(winsResult.rows[0].wins)
         });
-
-    // handle unexpected server or database errors
     } catch (error) {
         console.error(error);
-
         res.status(500).json({
             message: "Internal server error"
         })
@@ -502,10 +492,8 @@ app.post("/fighters", verifyAdmin, async (req, res) => {
 
 app.delete("/fighters/:id", verifyAdmin, async (req, res) => {
     try {
-        // extract fighter id from the request url
         const { id } = req.params;
 
-        // delete the fighter from the database
         const result = await pool.query(
             `
             DELETE FROM fighters
@@ -514,17 +502,13 @@ app.delete("/fighters/:id", verifyAdmin, async (req, res) => {
             [id]
         );
 
-        // check whether a fighter with this id existed
         if (result.rowCount === 0) {
             return res.status(404).json({
                 message: "Fighter not found"
             });
         }
 
-        // confirm the fighter was sucessfully deleted
         res.sendStatus(204);
-
-        // handle unexpected server or database errors
         } catch (error) {
             console.error(error);
 
@@ -536,7 +520,6 @@ app.delete("/fighters/:id", verifyAdmin, async (req, res) => {
 
 app.put("/fighters/:id", verifyAdmin, async (req, res) => {
     try {
-        // extract fighter id from the url and updated data from request
         const { id } = req.params; 
 
         const {
@@ -564,14 +547,12 @@ app.put("/fighters/:id", verifyAdmin, async (req, res) => {
             submissionsPer15Min
         } = req.body; 
 
-        // validate the data request before accessing the database
         if (!weightClasses.includes(weightClass)){ 
             return res.status(400).json({
                 message: "Invalid weight class",
             });
         } 
 
-        // update the fighter and return the updated record
         const result = await pool.query( 
             `
             UPDATE fighters
@@ -651,20 +632,16 @@ app.put("/fighters/:id", verifyAdmin, async (req, res) => {
             ]
         );
 
-        // if no rows updated, the fighter does not exist
         if (result.rows.length ===0){ 
             return res.status(404).json({
                 message: "Fighter not found" 
             });
         } 
 
-        // return updated fighter to frontend
         res.json(result.rows[0]);
-
-    // handle unexpected server or database errors    
+        
     } catch (error) {
         console.error(error);
-
         res.status(500).json({
             message: "Internal server error"
         });

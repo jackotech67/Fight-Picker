@@ -102,14 +102,18 @@ function HomePage() {
     }
 
     function selectFighter(fighter) {
+        const fullFighter = fighters.find(
+            (fullFighter) => fullFighter.id === fighter.id
+        );
+
         if (fighter1 === null) {
-        setFighter1(fighter);
+            setFighter1(fullFighter);
         }
-        else if (fighter1 === fighter) {
-        return
+        else if (fighter1.id === fighter.id) {
+            return;
         }
         else if (fighter2 === null) {
-            setFighter2(fighter);
+            setFighter2(fullFighter);
 
             comparisonRef.current?.scrollIntoView({
                 behavior: "smooth"

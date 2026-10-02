@@ -3,6 +3,13 @@ import { useParams, Link } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+function formatHeight(inches) {
+    const feet = Math.floor(inches / 12);
+    const remainingInches = inches % 12;
+
+    return `${feet}' ${remainingInches}"`;
+}
+
 function FighterProfile() {
     const { id } = useParams();
 
@@ -36,7 +43,7 @@ function FighterProfile() {
             <div className="fighter-content-wrap">
                 <div className="fighter-summary">
                     <h2>Profile</h2>
-                    <p>Height: {fighter.height}"</p>
+                    <p>Height: {formatHeight(fighter.height)}</p>
                     <p>Reach: {fighter.reach}"</p>
                     <p>Stance: {fighter.stance}</p>
                     <p>Age: {fighter.age}</p>
