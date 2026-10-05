@@ -124,7 +124,50 @@
 .loser {
   background-color: #fdeeee;
 }
+.comparison-table-content th:first-child,
+.comparison-table-content td:first-child,
+.comparison-table-content th:last-child,
+.comparison-table-content td:last-child {
+    width: 20%;
+}
+.comparison-table-content th:nth-child(2),
+.comparison-table-content td:nth-child(2) {
+    width: 60%;
+}
 
+/* upcoming event */
+
+.card-selector {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 2rem 0 1rem;
+}
+.card-selector button {
+    cursor: pointer;
+}
+.upcoming-event {
+    width: 80%;
+    max-width: 900px;
+    margin: 2rem auto;
+    text-align: center;
+}
+.event-matchups {
+    width: 100%;
+    border-collapse: collapse;
+}
+.event-matchups td {
+    padding: 1rem;
+    border-bottom: 1px solid #ccc;
+}
+.bout-matchup td:first-child,
+.bout-matchup td:last-child {
+    width: 45%;
+}
+.bout-matchup td:nth-child(2) {
+    width: 10%;
+    text-align: center;
+}
 
 /* fighter profile page */
 

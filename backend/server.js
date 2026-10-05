@@ -97,6 +97,84 @@ app.get("/admin/check", verifyAdmin, (req, res) => {
     res.json({ authenticated: true});
 });
 
+app.get("/events/upcoming", async (req, res) => {
+    try {
+        const eventResult = await pool.query(
+            `
+            SELECT
+                id,
+                name,
+                event_date AS "eventDate",
+                cito_slug AS "citoSlug"
+            FROM events
+            WHERE event_date >= CURRENT_DATE
+            ORDER BY event_date ASC
+            LIMIT 1
+            `
+        );
+        const event = eventResult.rows[0];
+
+        if (!event) {
+            return res.status(404).json({
+                message: "No upcoming event found"
+            });
+        }
+
+        const boutResult = await pool.query(
+            `
+            SELECT
+                id,
+                method, 
+                result_round AS "resultRound",
+                result_time AS "resultTime",
+                card_section AS "cardSection",
+                bout_order AS "boutOrder"
+            FROM bouts
+            WHERE event_id = $1
+            ORDER BY bout_order;
+            `,
+            [event.id]
+        );
+
+        const fighterResult = await pool.query(
+            `
+            SELECT
+                bout_performance.bout_id AS "boutId",
+                fighters.id,
+                fighters.first_name AS "firstName",
+                fighters.last_name AS "lastName",
+                fighters.weight_class AS "weightClass",
+                fighters.career_wins AS "careerWins",
+                fighters.career_losses AS "careerLosses",
+                fighters.career_draws AS "careerDraws"
+            FROM bout_performance
+            JOIN fighters
+                ON bout_performance.fighter_id = fighters.id
+            WHERE bout_performance.bout_id = ANY($1)
+            `,
+            [boutResult.rows.map((bout) => bout.id)]
+        );
+
+        const bouts = boutResult.rows.map((bout) => ({
+            ...bout,
+            fighters: fighterResult.rows.filter(
+                (fighter) => fighter.boutId === bout.id
+            )
+        }));
+
+        res.json({
+            ...event,
+            bouts
+        });
+
+    } catch (error){
+        console.error(error);
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+});
+
 app.post("/admin/import/upcoming", verifyAdmin, async (req, res) => {
     try {
         await importUpcomingEvent();

@@ -1,7 +1,7 @@
 import './App.css'
+import FighterCard from './FighterCard';
 import Navbar from './Navbar';
 import { useState, useEffect, useRef } from 'react';
-import { Link } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -20,26 +20,18 @@ const weightClasses = [
 function HomePage() {
 
     const [fighters, setFighters] = useState([]);
+    const [upcomingFighters, setUpcomingFighters] = useState([]);
     const comparisonRef = useRef(null);
-    const [upcomingEvent, setUpcomingEvent] = useState(null);
-    const [selectedCard, setSelectedCard] = useState("Main Card");
-
-    const displayedBouts = upcomingEvent?.bouts.filter(
-        (bout) => bout.cardSection === selectedCard
-    ) || [];
 
     useEffect(() => {
         fetch(`${API_URL}/fighters`) 
         .then((response) => response.json()) 
         .then((data) => setFighters(data)); 
+        fetch(`${API_URL}/fighters/upcoming`)
+        .then((response) => response.json())
+        .then((data) => setUpcomingFighters(data));
     }, []);
 
-    useEffect(() => {
-        fetch(`${API_URL}/events/upcoming`)
-            .then((response) => response.json())
-            .then((data) => setUpcomingEvent(data));
-    }, []);
-           
     useEffect(() => {
         const token = sessionStorage.getItem("adminToken");
 
@@ -58,6 +50,28 @@ function HomePage() {
         });
     }, []);
 
+    
+    const [selectedWeightClass, setSelectedWeightClass] = useState("");
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const filteredFighters = fighters.filter((fighter) => {
+        const matchesWeightClass =
+            selectedWeightClass === "" ||
+            fighter.weightClass === selectedWeightClass;
+
+        const fullName = `${fighter.firstName} ${fighter.lastName}`.toLowerCase();
+
+        const matchesSearch =
+            fullName.includes(searchTerm.toLowerCase());
+
+        return matchesWeightClass && matchesSearch;
+    });
+
+    const displayedFighters =
+        selectedWeightClass === "" && searchTerm === ""
+            ? upcomingFighters
+            : filteredFighters;
+
     const [fighter1, setFighter1] = useState(null);
     const [fighter2, setFighter2] = useState(null);
     const [showComparison, setShowComparison] = useState(false);
@@ -70,6 +84,24 @@ function HomePage() {
     const [highlightStats, setHighlightStats] = useState(false);
 
     const [pastEventSlug, setPastEventSlug] = useState("");
+
+    function deleteFighter(idToDelete) {
+
+        fetch(`${API_URL}/fighters/${idToDelete}`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${sessionStorage.getItem("adminToken")}`
+            }
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Failed to delete fighter");
+            }
+            setFighters(
+                fighters.filter((fighter) => fighter.id !== idToDelete)
+            );
+        });
+    }
 
     function selectFighter(fighter) {
         const fullFighter = fighters.find(
@@ -89,24 +121,6 @@ function HomePage() {
                 behavior: "smooth"
             });
         }
-    }
-
-    function compareFighters(fighter1, fighter2) {
-        const fullFighter1 = fighters.find(
-            (fighter) => fighter.id === fighter1.id
-        );
-
-        const fullFighter2 = fighters.find(
-            (fighter) => fighter.id === fighter2.id
-        );
-
-        setFighter1(fullFighter1);
-        setFighter2(fullFighter2);
-        setShowComparison(true);
-
-        comparisonRef.current?.scrollIntoView({
-            behavior: "smooth"
-        });
     }
 
     function resetMatchup() {
@@ -229,11 +243,12 @@ function HomePage() {
                 </p>
                 <div className="comparison-controls">
                     <div className="comparison-buttons">
-                        <button onClick={resetMatchup}>Reset</button><button onClick={() => setHighlightStats(!highlightStats)}>
+                        <button onClick={() => setShowComparison(true)}>Compare</button>
+                        <button onClick={resetMatchup}>Reset</button>
+                    </div>
+                    <button onClick={() => setHighlightStats(!highlightStats)}>
                         {highlightStats ? "Hide Highlights" : "Highlight Stats"}
                     </button>
-                    </div>
-                    
                 </div>
                 
                 {showComparison && (
@@ -396,62 +411,40 @@ function HomePage() {
                     </div>
                 ) : (<p>Please select two fighters.</p>)
                 )}
-            </div> {/* comparison wrap */}
-            <div className="card-selector">
-                <button onClick={() => setSelectedCard("Main Card")}>
-                    Main Card
-                </button>
-                <button onClick={() => setSelectedCard("Prelims")}>
-                    Prelims
-                </button>
-            </div>
-            <div className="upcoming-event">
-                <h2>{upcomingEvent?.name}</h2>
-                <table className="event-matchups">
-                    <tbody>
-                        {displayedBouts.map((bout) => (
-                            <>
-                                <tr className="bout-weight-class" key={`${bout.id}-weight`}>
-                                    <th colSpan="3">
-                                        {bout.fighters[0]?.weightClass} 
-                                    </th>
-                                </tr>
 
-                                <tr className="bout-matchup" key={bout.id}>
-                                    <td>
-                                        <Link to={`/fighter/${bout.fighters[0]?.id}`}>
-                                            {bout.fighters[0]?.firstName} {bout.fighters[0]?.lastName}
-                                        </Link>
-                                        <div className="fighter-record">
-                                            {bout.fighters[0]?.careerWins}-
-                                            {bout.fighters[0]?.careerLosses}-
-                                            {bout.fighters[0]?.careerDraws}
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <button
-                                            className='compare-fighters-button'
-                                            onClick={() => compareFighters(bout.fighters[0], bout.fighters[1])}
-                                        >
-                                            🥊
-                                        </button>
-                                        <div>VS</div>
-                                    </td>
-                                    <td>
-                                        <Link to={`/fighter/${bout.fighters[0]?.id}`}>
-                                            {bout.fighters[1]?.firstName} {bout.fighters[1]?.lastName}
-                                        </Link>
-                                        <div className="fighter-record">
-                                            {bout.fighters[1]?.careerWins}-
-                                            {bout.fighters[1]?.careerLosses}-
-                                            {bout.fighters[1]?.careerDraws}
-                                        </div>
-                                    </td>
-                                </tr>
-                            </>
-                        ))}
-                    </tbody>
-                </table>
+            </div> {/* comparison wrap */}
+                <input
+                    type="text"
+                    className="fighter-search"
+                    placeholder="Search fighters..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <select 
+                className='select-weight-class-button'
+                value={selectedWeightClass}
+                onChange={(e) => setSelectedWeightClass(e.target.value)}
+                >
+                <option value="">Next Event</option>
+                {weightClasses.map((weightClass) => (
+                    <option key={weightClass} value={weightClass}>{weightClass}</option>
+                ))}
+                </select>
+            <div className="fighter-list">
+                {displayedFighters.map((fighter) => (
+                <FighterCard 
+                    key={fighter.id} 
+                    fighter={fighter}
+                    deleteFighter={deleteFighter}
+                    selectFighter={selectFighter}
+                    isAdmin={isAdmin}
+                    selection={
+                        fighter.id === fighter1?.id ? "fighter-1" :
+                        fighter.id === fighter2?.id ? "fighter-2" :
+                        ""
+                    }
+                />
+                ))}
             </div>
         </div> 
     );

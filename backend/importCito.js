@@ -22,21 +22,21 @@ function timeToSeconds(time) {
     return (Number(minutes) * 60) + Number(seconds);
 }
 
-async function importCitoData() {
+async function importCitoData(eventSlug) {
     
     //FETCH UPCOMING EVENT FROM CITO
     const response = await fetch(
-        "https://api.citoapi.com/api/v1/ufc/events/upcoming",
+        `https://api.citoapi.com/api/v1/ufc/events/${eventSlug}`,
         {
             headers: {
                 "X-API-KEY": process.env.CITO_API_KEY
             }
         }
     );
-    const result = await response.json();
-    const events = result.data;
 
-    const event = events[0];
+    const result = await response.json();
+    const event = result.data;
+
     console.log(
         event.title,
         event.eventDate,
@@ -76,17 +76,35 @@ async function importCitoData() {
         // INSERT / UPDATE EACH BOUT IN DATABASE
         const insertedBout = await pool.query(
             `
-            INSERT INTO bouts (event_id, method, result_round, result_time, cito_id)
-            VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO bouts (
+            event_id, 
+            method, 
+            result_round, 
+            result_time, 
+            cito_id,
+            card_section,
+            bout_order
+            )
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
             ON CONFLICT (cito_id)
             DO UPDATE SET
                 event_id = EXCLUDED.event_id,
                 method = EXCLUDED.method,
                 result_round = EXCLUDED.result_round,
-                result_time = EXCLUDED.result_time
-                RETURNING id
+                result_time = EXCLUDED.result_time,
+                card_section = EXCLUDED.card_section,
+                bout_order = EXCLUDED.bout_order
+            RETURNING id
             `,
-            [eventId, bout.method, bout.resultRound, bout.resultTime, bout.id]
+            [
+                eventId, 
+                bout.method, 
+                bout.resultRound, 
+                bout.resultTime, 
+                bout.id,
+                bout.cardSection,
+                bout.boutOrder
+            ]
         );
         const boutId = insertedBout.rows[0].id;
         for (const fighter of bout.fighters) {
@@ -210,10 +228,22 @@ async function importCitoData() {
             );
             const fighterId = insertedFighter.rows[0].id;
 
+            // CREATE FIGHTER - BOUT RELATIONSHIP
+            await pool.query(
+                `
+                INSERT INTO bout_performance (bout_id, fighter_id, outcome)
+                VALUES ($1, $2, $3)
+                ON CONFLICT (bout_id, fighter_id)
+                DO NOTHING
+                `,
+                [boutId, fighterId, fighter.outcome]
+            );
+
             // PREPARE FIGHTER BOUT PERFORMANCE
             const boutStats = bout.boutStats.find(
                 stat => stat.fighterSlug === fighter.fighterSlug
             );
+            
             if (boutStats) {
                 const significantStrikes = splitStat(boutStats.significantStrikes);
                 const totalStrikes = splitStat(boutStats.totalStrikes);
@@ -379,4 +409,6 @@ async function importCitoData() {
     }
 }
 
-importCitoData();
+const eventSlug = process.argv[2];
+
+importCitoData(eventSlug);
