@@ -6,9 +6,11 @@ import { Link } from "react-router-dom";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const weightClasses = [
+    "Womens Strawweight",
     "Flyweight",
     "Women's Flyweight",
     "Bantamweight",
+    "Womens Bantamweight",
     "Featherweight",
     "Lightweight",
     "Welterweight",
@@ -220,17 +222,13 @@ function HomePage() {
             <h1 className='title'>Fighter Picker</h1> 
 
             <div className='comparison-wrapper' ref={comparisonRef}>
-                <h2>Comparison</h2>
-                <p>
-                    Fighter1: {fighter1 ? `${fighter1.firstName} ${fighter1.lastName}` : "None Selected"}
-                </p>
-                <p>
-                    Fighter2: {fighter2 ? `${fighter2.firstName} ${fighter2.lastName}` : "None Selected"}
-                </p>
+                <h2>Stat attack</h2>
+                <h3>Select 🥊 to compare fighters</h3>
                 <div className="comparison-controls">
                     <div className="comparison-buttons">
-                        <button onClick={resetMatchup}>Reset</button><button onClick={() => setHighlightStats(!highlightStats)}>
-                        {highlightStats ? "Hide Highlights" : "Highlight Stats"}
+                        <button onClick={resetMatchup}>Reset</button>
+                        <button onClick={() => setHighlightStats(!highlightStats)}>
+                            {highlightStats ? "Hide Highlights" : "Highlight Stats"}
                     </button>
                     </div>
                     
