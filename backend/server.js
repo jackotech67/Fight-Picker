@@ -249,6 +249,7 @@ app.get("/fighters/upcoming", async (req, res) => {
 
 app.get("/fighters", async (req, res) => {
     try {
+        const { weightClass } = req.query;
         const result = await pool.query(
         `
         SELECT 
@@ -276,7 +277,9 @@ app.get("/fighters", async (req, res) => {
             career_draws AS "careerDraws",
             career_no_contests AS "careerNoContests"
         FROM fighters
-        `
+        WHERE ($1::text IS NULL OR weight_class = $1)
+        ORDER BY last_name
+        `, [weightClass || null]
     );
 
     res.json(result.rows);

@@ -2,9 +2,13 @@
 
 .navbar {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   padding: 1rem;
+}
+.navbar-right {
+  display: flex;
+  align-items: center;
 }
 .navbar button {
   margin: 0.125rem;
@@ -169,6 +173,12 @@
     text-align: center;
 }
 
+/* fighter library */
+
+.fighter-library h1 {
+  margin-left: 1rem;
+}
+
 /* fighter profile page */
 
 .fighter-profile {
@@ -300,27 +310,23 @@
   padding: 2rem;
   text-align: center;
 }
-
 .bout-fighter-header {
   display: flex;
   justify-content: space-between;
   max-width: 600px;
   margin: 2rem auto;
 }
-
 .round-comparison-table {
   border-collapse: collapse;
   width: 100%;
   max-width: 600px;
   margin: 0 auto 2rem;
 }
-
 .round-comparison-table td {
   border: 1px solid #ccc;
   text-align: center;
   padding: 0.25rem 0;
 }
-
 .round-comparison-table tbody tr:nth-child(even) {
   background-color: #f5f5f5;
 }
