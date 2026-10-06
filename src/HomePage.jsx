@@ -19,7 +19,7 @@ const weightClasses = [
     "Heavyweight",
 ];
 
-function HomePage() {
+function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
 
     const [fighters, setFighters] = useState([]);
     const comparisonRef = useRef(null);
@@ -41,57 +41,16 @@ function HomePage() {
             .then((response) => response.json())
             .then((data) => setUpcomingEvent(data));
     }, []);
-           
-    useEffect(() => {
-        const token = sessionStorage.getItem("adminToken");
-
-        if (!token) return;
-
-        fetch(`${API_URL}/admin/check`, {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        })
-        .then((response) => {
-            if (!response.ok) {
-                sessionStorage.removeItem("adminToken");
-                setIsAdmin(false);
-            }
-        });
-    }, []);
 
     const [fighter1, setFighter1] = useState(null);
     const [fighter2, setFighter2] = useState(null);
     const [showComparison, setShowComparison] = useState(false);
 
-    const [isAdmin, setIsAdmin] = useState(
-        () => sessionStorage.getItem("adminToken") !== null
-    );
     const [adminMessage, setAdminMessage] = useState("");
 
     const [highlightStats, setHighlightStats] = useState(false);
 
     const [pastEventSlug, setPastEventSlug] = useState("");
-
-    function selectFighter(fighter) {
-        const fullFighter = fighters.find(
-            (fullFighter) => fullFighter.id === fighter.id
-        );
-
-        if (fighter1 === null) {
-            setFighter1(fullFighter);
-        }
-        else if (fighter1.id === fighter.id) {
-            return;
-        }
-        else if (fighter2 === null) {
-            setFighter2(fullFighter);
-
-            comparisonRef.current?.scrollIntoView({
-                behavior: "smooth"
-            });
-        }
-    }
 
     function compareFighters(fighter1, fighter2) {
         const fullFighter1 = fighters.find(
@@ -115,37 +74,6 @@ function HomePage() {
         setFighter1(null);
         setFighter2(null);
         setShowComparison(false);
-    }
-
-    async function unlockAdmin(){
-        const password = prompt("Enter admin password");
-
-        if (password == null) {
-            return;
-        }
-
-        const response = await fetch(`${API_URL}/admin/login`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ password })
-        });
-        const data = await response.json();
-        
-        if (response.ok) {
-            sessionStorage.setItem("adminToken", data.token);
-            setIsAdmin(true);
-            setAdminMessage("");
-        } else {
-            setAdminMessage("Invalid password")
-        }
-    }
-
-    function lockAdmin() {
-        sessionStorage.removeItem("adminToken");
-        setIsAdmin(false);
-        setAdminMessage("");
     }
 
     async function importUpcoming() {

@@ -17,7 +17,7 @@ function timeToSeconds(time) {
 
 async function testCito() {
     const response = await fetch(
-        "https://api.citoapi.com/api/v1/ufc/events/ufc-fight-night-october-10-2026/bouts",
+        "https://api.citoapi.com/api/v1/ufc/fighters/arman-tsarukyan",
         {
             headers: {
                 "X-API-KEY": process.env.CITO_API_KEY

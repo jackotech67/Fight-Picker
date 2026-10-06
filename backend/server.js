@@ -257,6 +257,7 @@ app.get("/fighters", async (req, res) => {
             first_name AS "firstName",
             last_name AS "lastName",
             weight_class AS "weightClass",
+            country,
             submission_wins AS "submissionWins",
             knockout_wins AS "knockoutWins", 
             decision_wins AS "decisionWins",

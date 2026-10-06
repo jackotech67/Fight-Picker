@@ -18,7 +18,7 @@ const weightClasses = [
     "Heavyweight",
 ];
 
-function FighterLibrary() {
+function FighterLibrary({ isAdmin, unlockAdmin, lockAdmin}) {
 
     const [fighters, setFighters] = useState([]);
     const [selectedWeightClass, setSelectedWeightClass] = useState("Lightweight");
@@ -35,9 +35,32 @@ function FighterLibrary() {
         return fullName.includes(searchTerm.toLowerCase());
     }));
 
+    function deleteFighter(idToDelete) {
+        console.log("Deleting fighter:", idToDelete);
+
+        fetch(`${API_URL}/fighters/${idToDelete}`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${sessionStorage.getItem("adminToken")}`
+            }
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Failed to delete fighter");
+            }
+            setFighters(
+                fighters.filter((fighter) => fighter.id !== idToDelete)
+            );
+        });
+    }
+
     return (
         <div className="fighter-library">
-            <Navbar />
+            <Navbar 
+                isAdmin={isAdmin} 
+                unlockAdmin={unlockAdmin}
+                lockAdmin={lockAdmin} 
+            />
             <h1>Fighters</h1>
 
             <div className="fighter-filter-controls">
@@ -54,7 +77,6 @@ function FighterLibrary() {
                         </option>
                     ))}
                 </select>
-
                 <input 
                     type="text"
                     className="fighter-search"
@@ -62,14 +84,17 @@ function FighterLibrary() {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)} 
                 />
-                <div className="fighter-list">
-                    {filteredFighters.map((fighter) => (
-                        <FighterCard
-                            key={fighter.id}
-                            fighter={fighter}
-                        />
-                    ))}
-                </div>
+            </div>
+
+            <div className="fighter-list">
+                {filteredFighters.map((fighter) => (
+                    <FighterCard
+                        key={fighter.id}
+                        fighter={fighter}
+                        isAdmin={isAdmin}
+                        deleteFighter={deleteFighter}
+                    />
+                ))}
             </div>
 
         </div>

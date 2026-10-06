@@ -107,12 +107,8 @@ async function importCitoData(eventSlug) {
             ]
         );
         const boutId = insertedBout.rows[0].id;
+        
         for (const fighter of bout.fighters) {
-            // console.log(
-            //     fighter.fighterName,
-            //     fighter.fighterSlug,
-            //     fighter.fighterId
-            // );
             // FETCH EACH FIGHTER PROFILE FROM CITO
             const fighterResponse = await fetch(
                 `https://api.citoapi.com/api/v1/ufc/fighters/${fighter.fighterSlug}`,
@@ -145,6 +141,7 @@ async function importCitoData(eventSlug) {
                     first_name,
                     last_name,
                     weight_class,
+                    country,
                     height,
                     reach,
                     stance,
@@ -170,13 +167,15 @@ async function importCitoData(eventSlug) {
                 VALUES (
                     $1, $2, $3, $4, $5, $6, $7, $8, 
                     $9, $10, $11, $12, $13, $14, $15, $16,
-                    $17, $18, $19, $20, $21, $22, $23, $24
+                    $17, $18, $19, $20, $21, $22, $23, $24,
+                    $25
                     )
                 ON CONFLICT (cito_slug)
                 DO UPDATE SET
                     first_name = EXCLUDED.first_name,
                     last_name = EXCLUDED.last_name,
                     weight_class = EXCLUDED.weight_class,
+                    country = EXCLUDED.country,
                     height = EXCLUDED.height,
                     reach = EXCLUDED.reach,
                     stance = EXCLUDED.stance,
@@ -203,6 +202,7 @@ async function importCitoData(eventSlug) {
                     fighterProfile.firstName,
                     fighterProfile.lastName,
                     fighterProfile.division,
+                    fighterProfile.country,
                     fighterProfile.heightInches,
                     fighterProfile.reachInches,
                     fighterProfile.stance,
