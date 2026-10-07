@@ -88,26 +88,6 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
         setAdminMessage(data.message);
     }
 
-    async function importPast() {
-        if (!pastEventSlug.trim()) {
-            setAdminMessage("Please enter an event slug");
-            return;
-        }
-        const response = await fetch(`${API_URL}/admin/import/past`, {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${sessionStorage.getItem("adminToken")}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                eventSlug: pastEventSlug
-            })
-        });
-
-        const data = await response.json();
-        setAdminMessage(data.message);
-    }
-
     function getWinner(value1, value2) {
         let className = "";
         if (highlightStats === false) {
@@ -141,12 +121,7 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
                 unlockAdmin={unlockAdmin}
                 lockAdmin={lockAdmin}
                 isAdmin={isAdmin}
-                importUpcoming={importUpcoming}
-                importPast={importPast}
-                pastEventSlug={pastEventSlug}
-                setPastEventSlug={setPastEventSlug}
             />
-            {adminMessage && <p>{adminMessage}</p>}
             <h1 className='title'>Fighter Picker</h1> 
 
             <div className='comparison-wrapper' ref={comparisonRef}>
