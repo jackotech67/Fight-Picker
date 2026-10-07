@@ -5,13 +5,6 @@ import { formatHeight, formatRate, formatPercentage } from "../utils/formatStats
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-function formatHeight(inches) {
-    const feet = Math.floor(inches / 12);
-    const remainingInches = inches % 12;
-
-    return `${feet}' ${remainingInches}"`;
-}
-
 function FighterProfile() {
     const { id } = useParams();
 
