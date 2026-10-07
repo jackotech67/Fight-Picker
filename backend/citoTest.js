@@ -1,33 +1,18 @@
 require("dotenv").config();
 
-// HELPER FUNCTIONS
-function splitStat(stat) {
-    const [landed, attempted] = stat.split(" of ");
-
-    return {
-        landed: Number(landed),
-        attempted: Number(attempted)
-    }
-}
-
-function timeToSeconds(time) {
-    const [minutes, seconds] = time.split(":");
-    return (Number(minutes) * 60) + Number(seconds);
-}
-
 async function testCito() {
     const response = await fetch(
-        "https://api.citoapi.com/api/v1/ufc/fighters/arman-tsarukyan",
+        "https://api.citoapi.com/api/v1/ufc/fighters/brendan-allen",
         {
             headers: {
-                "X-API-KEY": process.env.CITO_API_KEY
+                "x-api-key": process.env.CITO_API_KEY
             }
         }
     );
 
-    const result = await response.json();
+    const data = await response.json();
 
-    console.dir(result, { depth: null });
+    console.dir(data, { depth: null });
 }
 
 testCito();

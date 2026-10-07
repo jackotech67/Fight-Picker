@@ -2,6 +2,7 @@ import '../App.css'
 import Navbar from '../Navbar';
 import { useState, useEffect, useRef } from 'react';
 import { Link } from "react-router-dom";
+import { formatHeight, formatRate, formatPercentage } from '../utils/formatStats';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -132,9 +133,8 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
                         <button onClick={resetMatchup}>Reset</button>
                         <button onClick={() => setHighlightStats(!highlightStats)}>
                             {highlightStats ? "Hide Highlights" : "Highlight Stats"}
-                    </button>
+                        </button>
                     </div>
-                    
                 </div>
                 
                 {showComparison && (
@@ -155,11 +155,11 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
                                 </tr>
                                 <tr>
                                     <td className={getWinner(fighter1.height, fighter2.height)}>
-                                        {fighter1.height}
+                                        {formatHeight(fighter1.height)}
                                     </td>
                                     <td>Height</td>
                                     <td className={getWinner(fighter2.height, fighter1.height)}>
-                                        {fighter2.height}
+                                        {formatHeight(fighter2.height)}
                                     </td>
                                 </tr>
                                 <tr>
@@ -191,74 +191,74 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
                                 </tr>
                                 <tr>
                                     <td className={getWinner(fighter1.strikesPerMin, fighter2.strikesPerMin)}>
-                                        {fighter1.strikesPerMin}
+                                        {formatRate(fighter1.strikesPerMin)}
                                     </td>
                                     <td>Strikes per min</td>
                                     <td className={getWinner(fighter2.strikesPerMin, fighter1.strikesPerMin)}>
-                                        {fighter2.strikesPerMin}
+                                        {formatRate(fighter2.strikesPerMin)}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td className={getWinner(fighter1.strikingAccuracy, fighter2.strikingAccuracy)}>
-                                        {fighter1.strikingAccuracy}
+                                        {formatPercentage(fighter1.strikingAccuracy)}
                                     </td>
                                     <td>Striking accuracy %</td>
                                     <td className={getWinner(fighter2.strikingAccuracy, fighter1.strikingAccuracy)}>
-                                        {fighter2.strikingAccuracy}
+                                        {formatPercentage(fighter2.strikingAccuracy)}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td className={getLoser(fighter1.strikesAbsorbedPerMin, fighter2.strikesAbsorbedPerMin)}>
-                                        {fighter1.strikesAbsorbedPerMin}
+                                        {formatRate(fighter1.strikesAbsorbedPerMin)}
                                     </td>
                                     <td>Strikes absorbed per min</td>
                                     <td className={getLoser(fighter2.strikesAbsorbedPerMin, fighter1.strikesAbsorbedPerMin)}>
-                                        {fighter2.strikesAbsorbedPerMin}
+                                        {formatRate(fighter2.strikesAbsorbedPerMin)}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td className={getWinner(fighter1.strikingDefence, fighter2.strikingDefence)}>
-                                        {fighter1.strikingDefence}
+                                        {formatPercentage(fighter1.strikingDefence)}
                                     </td>
                                     <td>Striking defence %</td>
                                     <td className={getWinner(fighter2.strikingDefence, fighter1.strikingDefence)}>
-                                        {fighter2.strikingDefence}
+                                        {formatRate(fighter2.strikingDefence)}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td className={getWinner(fighter1.takedownsPer15Min, fighter2.takedownsPer15Min)}>
-                                        {fighter1.takedownsPer15Min}
+                                        {formatRate(fighter1.takedownsPer15Min)}
                                     </td>
                                     <td>Takedowns per 15 min</td>
                                     <td className={getWinner(fighter2.takedownsPer15Min, fighter1.takedownsPer15Min)}>
-                                        {fighter2.takedownsPer15Min}
+                                        {formatRate(fighter2.takedownsPer15Min)}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td className={getWinner(fighter1.takedownAccuracy, fighter2.takedownAccuracy)}>
-                                        {fighter1.takedownAccuracy}
+                                        {formatPercentage(fighter1.takedownAccuracy)}
                                     </td>
                                     <td>Takedown accuracy %</td>
                                     <td className={getWinner(fighter2.takedownAccuracy, fighter1.takedownAccuracy)}>
-                                        {fighter2.takedownAccuracy}
+                                        {formatPercentage(fighter2.takedownAccuracy)}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td className={getWinner(fighter1.takedownDefence, fighter2.takedownDefence)}>
-                                        {fighter1.takedownDefence}
+                                        {formatPercentage(fighter1.takedownDefence)}
                                     </td>
                                     <td>Takedown defence %</td>
                                     <td className={getWinner(fighter2.takedownDefence, fighter1.takedownDefence)}>
-                                        {fighter2.takedownDefence}
+                                        {formatPercentage(fighter2.takedownDefence)}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td className={getWinner(fighter1.submissionsPer15Min, fighter2.submissionsPer15Min)}>
-                                        {fighter1.submissionsPer15Min}
+                                        {formatRate(fighter1.submissionsPer15Min)}
                                     </td>
                                     <td>Submissions per 15 min</td>
                                     <td className={getWinner(fighter2.submissionsPer15Min, fighter1.submissionsPer15Min)}>
-                                        {fighter2.submissionsPer15Min}
+                                        {formatRate(fighter2.submissionsPer15Min)}
                                     </td>
                                 </tr>
                                 {/* Career */}
@@ -320,14 +320,25 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
 
                                 <tr className="bout-matchup" key={bout.id}>
                                     <td>
-                                        <Link to={`/fighter/${bout.fighters[0]?.id}`}>
-                                            {bout.fighters[0]?.firstName} {bout.fighters[0]?.lastName}
-                                        </Link>
-                                        <div className="fighter-record">
-                                            {bout.fighters[0]?.careerWins}-
-                                            {bout.fighters[0]?.careerLosses}-
-                                            {bout.fighters[0]?.careerDraws}
+                                        <div className="matchup-fighter matchup-fighter-left">
+                                            {bout.fighters[0]?.imageUrl && (
+                                                <img 
+                                                    src={bout.fighters[0].imageUrl} 
+                                                    alt={`${bout.fighters[0].firstName} ${bout.fighters[0].lastName}`} 
+                                                />
+                                            )} 
+                                            <div className='matchup-fighter-stats matchup-fighter-stats-left'>
+                                                <Link to={`/fighter/${bout.fighters[0]?.id}`}>
+                                                    {bout.fighters[0]?.firstName} {bout.fighters[0]?.lastName}
+                                                </Link>
+                                                <div className="fighter-record">
+                                                    {bout.fighters[0]?.careerWins}-
+                                                    {bout.fighters[0]?.careerLosses}-
+                                                    {bout.fighters[0]?.careerDraws}
+                                                </div>
+                                            </div>
                                         </div>
+                                       
                                     </td>
                                     <td>
                                         <button
@@ -339,14 +350,26 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
                                         <div>VS</div>
                                     </td>
                                     <td>
-                                        <Link to={`/fighter/${bout.fighters[0]?.id}`}>
-                                            {bout.fighters[1]?.firstName} {bout.fighters[1]?.lastName}
-                                        </Link>
-                                        <div className="fighter-record">
-                                            {bout.fighters[1]?.careerWins}-
-                                            {bout.fighters[1]?.careerLosses}-
-                                            {bout.fighters[1]?.careerDraws}
+                                        <div className="matchup-fighter matchup-fighter-right">
+                                            {bout.fighters[1]?.imageUrl && (
+                                                <img 
+                                                    src={bout.fighters[1].imageUrl} 
+                                                    alt={`${bout.fighters[1].firstName} ${bout.fighters[1].lastName}`} 
+                                                />
+                                            )}
+                                            <div className='matchup-fighter-stats matchup-fighter-stats-left'>
+                                                <Link to={`/fighter/${bout.fighters[1]?.id}`}>
+                                                    {bout.fighters[1]?.firstName} {bout.fighters[1]?.lastName}
+                                                </Link>
+                                                <div className="fighter-record">
+                                                    {bout.fighters[1]?.careerWins}-
+                                                    {bout.fighters[1]?.careerLosses}-
+                                                    {bout.fighters[1]?.careerDraws}
+                                                </div>
+                                            </div>
                                         </div>
+                                        
+                                        
                                     </td>
                                 </tr>
                             </>

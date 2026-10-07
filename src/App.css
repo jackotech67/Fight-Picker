@@ -173,10 +173,44 @@
     text-align: center;
 }
 
+.matchup-fighter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+.matchup-fighter-right {
+    flex-direction: row-reverse;
+}
+.matchup-fighter-stats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.matchup-fighter-stats-right {
+  align-items: left;
+  justify-content: flex-start;
+}
+.matchup-fighter img {
+    width: 125px;
+    height: 125px;
+    object-fit: cover;
+}
+
 /* fighter library */
 
 .fighter-library h1 {
   margin-left: 1rem;
+}
+
+/* fighter card */
+
+.fighter-image {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
 }
 
 /* fighter profile page */
@@ -203,7 +237,7 @@
 .fighter-history { 
   margin-top: 100px;
   text-align: center;
-}  /* wrap this later, fighter-record is used by fightcard */
+} 
 
 /* fighter history */
 

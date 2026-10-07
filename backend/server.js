@@ -145,7 +145,8 @@ app.get("/events/upcoming", async (req, res) => {
                 fighters.weight_class AS "weightClass",
                 fighters.career_wins AS "careerWins",
                 fighters.career_losses AS "careerLosses",
-                fighters.career_draws AS "careerDraws"
+                fighters.career_draws AS "careerDraws",
+                fighters.image_url AS "imageUrl"
             FROM bout_performance
             JOIN fighters
                 ON bout_performance.fighter_id = fighters.id
@@ -297,7 +298,8 @@ app.get("/fighters", async (req, res) => {
             career_wins AS "careerWins",
             career_losses As "careerLosses",
             career_draws AS "careerDraws",
-            career_no_contests AS "careerNoContests"
+            career_no_contests AS "careerNoContests", 
+            image_url AS "imageUrl"
         FROM fighters
         WHERE ($1::text IS NULL OR weight_class = $1)
         ORDER BY last_name
@@ -325,6 +327,7 @@ app.get("/fighters/:id", async (req, res) => {
                 first_name AS "firstName",
                 last_name AS "lastName",
                 weight_class AS "weightClass",
+                country,
                 submission_wins AS "submissionWins",
                 knockout_wins AS "knockoutWins",
                 decision_wins AS "decisionWins",
@@ -343,7 +346,8 @@ app.get("/fighters/:id", async (req, res) => {
                 career_wins AS "careerWins",
                 career_losses AS "careerLosses",
                 career_draws AS "careerDraws",
-                career_no_contests AS "careerNoContests"
+                career_no_contests AS "careerNoContests",
+                image_url AS "imageUrl"
             FROM fighters
             WHERE id = $1
             `,

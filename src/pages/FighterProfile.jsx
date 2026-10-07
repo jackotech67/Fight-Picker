@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import { getCountryFlag } from "../utils/countryFlags";
+import { formatHeight, formatRate, formatPercentage } from "../utils/formatStats";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -43,6 +45,9 @@ function FighterProfile() {
             <div className="fighter-content-wrap">
                 <div className="fighter-summary">
                     <h2>Profile</h2>
+                    <p>
+                        Country: {fighter.country || "Unavailable"} {getCountryFlag(fighter.country)}
+                    </p>
                     <p>Height: {formatHeight(fighter.height)}</p>
                     <p>Reach: {fighter.reach}"</p>
                     <p>Stance: {fighter.stance}</p>
@@ -50,14 +55,14 @@ function FighterProfile() {
                 </div>
                 <div className="fighter-stats">
                     <h2>Advanced stats</h2>
-                    <p>Strikes per min: {fighter.strikesPerMin}</p>
-                    <p>Striking accuracy: {fighter.strikingAccuracy}%</p>
-                    <p>Strikes absorbed per min: {fighter.strikesAbsorbedPerMin}</p>
-                    <p>Striking defence: {fighter.strikingDefence}%</p>
-                    <p>Takedowns per 15 min: {fighter.takedownsPer15Min}</p>
-                    <p>Takedown accuracy: {fighter.takedownAccuracy}%</p>
-                    <p>Takedown defence: {fighter.takedownDefence}%</p>
-                    <p>Submissions per 15 min: {fighter.submissionsPer15Min}</p>
+                    <p>Strikes per min: {formatRate(fighter.strikesPerMin)}</p>
+                    <p>Striking accuracy: {formatPercentage(fighter.strikingAccuracy)}</p>
+                    <p>Strikes absorbed per min: {formatRate(fighter.strikesAbsorbedPerMin)}</p>
+                    <p>Striking defence: {formatPercentage(fighter.strikingDefence)}</p>
+                    <p>Takedowns per 15 min: {formatRate(fighter.takedownsPer15Min)}</p>
+                    <p>Takedown accuracy: {formatPercentage(fighter.takedownAccuracy)}</p>
+                    <p>Takedown defence: {formatPercentage(fighter.takedownDefence)}</p>
+                    <p>Submissions per 15 min: {formatRate(fighter.submissionsPer15Min)}</p>
                 </div>
                 <div className="fighter-notes">
                     <h2>Notes</h2>
