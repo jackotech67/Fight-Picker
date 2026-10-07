@@ -331,6 +331,57 @@
   background-color: #f5f5f5;
 }
 
+/* events page */
+
+.events-page {
+  width: 80%;
+  max-width: 900px;
+  margin: 2rem auto;
+}
+
+.event-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  padding: 1rem;
+  border-bottom: 1px solid #ccc;
+  text-decoration: none;
+  color: inherit;
+}
+
+.event-row:hover {
+  background-color: #f5f5f5;
+}
+
+/* event profile */
+
+.event-profile {
+  width: 80%;
+  max-width: 900px;
+  margin: 2rem auto;
+}
+
+.event-bout {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid #ccc;
+  text-decoration: none;
+  color: inherit;
+}
+
+.event-bout span:first-child {
+  text-align: right;
+}
+
+.event-bout span:last-child {
+  text-align: left;
+}
+
+.event-bout:hover {
+  background-color: #f5f5f5;
+}
+
 @media (max-width: 600px) {
   .fighter-list {
     grid-template-columns: 1fr;

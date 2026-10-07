@@ -1,10 +1,12 @@
 import { Routes, Route } from "react-router-dom";
-import FighterProfile from './FighterProfile';
-import HomePage from './HomePage';
-import AddFighterPage from './AddFighterPage';
-import EditFighterPage from './EditFighterPage';
-import BoutProfile from "./BoutProfile";
-import FighterLibrary from "./FighterLibrary";
+import FighterProfile from './pages/FighterProfile';
+import HomePage from './pages/HomePage';
+import AddFighterPage from './pages/AddFighterPage';
+import EditFighterPage from './pages/EditFighterPage';
+import BoutProfile from "./pages/BoutProfile";
+import FighterLibrary from "./pages/FighterLibrary";
+import EventsPage from "./pages/EventsPage";
+import EventProfile from "./pages/EventProfile";
 import { useState, useEffect } from "react";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -89,6 +91,8 @@ function App() {
           />
         } 
       />
+      <Route path="/events" element={<EventsPage />} />
+      <Route path="/events/:id" element={<EventProfile />} />
     </Routes>
   );
 }

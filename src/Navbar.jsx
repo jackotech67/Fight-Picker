@@ -12,13 +12,16 @@ function Navbar ({
             </Link>
             
             <div className="navbar-right">
+                <Link to="/events">
+                    <button>Events</button>
+                </Link>
                 <Link to="/fighters">
                     <button>Fighters</button>
                 </Link>
                 <button onClick={unlockAdmin}>
                 Admin
                 </button>
-                
+
                  {isAdmin && (
                     <>  
                         <Link to="/fighters/new">
