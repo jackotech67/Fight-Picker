@@ -6,8 +6,6 @@ const cors = require("cors");
 const { Pool } = require("pg");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const importUpcomingEvent = require("./importUpcomingEvent");
-const importPastEvent = require("./importPastEvent");
 
 app.use(express.json()); 
 app.use(cors({
