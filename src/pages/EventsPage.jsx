@@ -8,7 +8,9 @@ function formatEventName(name) {
     if (name.startsWith("UFC Fight Night")) {
         return "UFC Fight Night";
     }
-
+    else if (name.startsWith("UFC 330")) {
+        return "UFC 330";
+    }
     return name.replace("Crypto.com ", "");
 }
 
