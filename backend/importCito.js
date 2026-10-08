@@ -37,13 +37,6 @@ async function importCitoData(eventSlug) {
     const result = await response.json();
     const event = result.data;
 
-    console.log(
-        event.title,
-        event.eventDate,
-        event.id,
-        event.slug
-    );
-
     // INSERT / UPDATE EVENT IN DATABASE
     const insertedEvent = await pool.query(
         `
@@ -71,11 +64,6 @@ async function importCitoData(eventSlug) {
     );
     const boutResult = await boutResponse.json();
     const bouts = boutResult.data;
-
-    console.log(bouts.map(bout => ({
-        order: bout.boutOrder,
-        fighters: bout.fighters
-    })));
 
     for (const bout of bouts) {
         // INSERT / UPDATE EACH BOUT IN DATABASE
@@ -412,6 +400,7 @@ async function importCitoData(eventSlug) {
         }
         
     }
+    console.log(`Successfully imported ${event.title}`);
 }
 
 const eventSlug = process.argv[2];

@@ -172,7 +172,11 @@ app.get("/events", async (req, res) => {
             FROM events
             LEFT JOIN bouts
                 ON bouts.event_id = events.id
-                AND bouts.bout_order = 1001
+                AND bouts.bout_order = (
+                    SELECT MIN(b2.bout_order)
+                    FROM bouts b2
+                    WHERE b2.event_id = events.id
+                )
             LEFT JOIN bout_performance
                 ON bout_performance.bout_id = bouts.id
             LEFT JOIN fighters
