@@ -128,6 +128,11 @@ async function importCitoData(eventSlug) {
             const decisionWins = winsByMethod?.dec?.count ?? 0;
 
             // INSERT UPDATE FIGHTER IN DATABASE
+            const height = Number(fighterProfile.heightInches);
+            const validHeight = height >= 48 && height <= 96 ? height : null;
+            const reach = Number(fighterProfile.reachInches);
+            const validReach = reach >= 40 && reach <= 96 ? reach : null;
+
             const insertedFighter = await pool.query(
                 `
                 INSERT INTO fighters (
@@ -196,8 +201,8 @@ async function importCitoData(eventSlug) {
                     fighterProfile.lastName,
                     fighterProfile.division,
                     fighterProfile.country,
-                    fighterProfile.heightInches,
-                    fighterProfile.reachInches,
+                    validHeight,
+                    validReach,
                     fighterProfile.stance,
                     fighterProfile.age,
                     stats?.sigStrikesLandedPerMin,
