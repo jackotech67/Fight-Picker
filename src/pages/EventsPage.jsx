@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 function EventsPage() {
 
+    const navigate = useNavigate();
     const [events, setEvents] = useState([]);
 
     useEffect(() => {
@@ -14,27 +16,32 @@ function EventsPage() {
     }, []);
 
     return (
-        <main className="events-page">
-            <h1>Events</h1>
+        <>
+            <main className="events-page">
+                <button onClick={() => navigate(-1)} className="back-button">
+                    ← Back
+                </button>
+                <h1>Events</h1>
 
-            {events.map((event) => (
-                <Link
-                    to={`/events/${event.id}`}
-                    className="event-row"
-                    key={event.id}
-                >
-                    <span>{event.name}</span>
-                    <span>{event.mainEvent}</span>
-                    <span>
-                        {new Date(event.eventDate).toLocaleDateString("en-NZ", {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric"
-                        })}
-                    </span>
-                </Link>
-            ))}
-        </main>
+                {events.map((event) => (
+                    <Link
+                        to={`/events/${event.id}`}
+                        className="event-row"
+                        key={event.id}
+                    >
+                        <span>{event.name}</span>
+                        <span>{event.mainEvent}</span>
+                        <span>
+                            {new Date(event.eventDate).toLocaleDateString("en-NZ", {
+                                day: "numeric",
+                                month: "long",
+                                year: "numeric"
+                            })}
+                        </span>
+                    </Link>
+                ))}
+            </main>
+        </>
     );
 }
 

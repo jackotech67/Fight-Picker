@@ -338,33 +338,6 @@
   font-style: italic;
 }
 
-/* bout profile */
-
-.bout-profile {
-  padding: 2rem;
-  text-align: center;
-}
-.bout-fighter-header {
-  display: flex;
-  justify-content: space-between;
-  max-width: 600px;
-  margin: 2rem auto;
-}
-.round-comparison-table {
-  border-collapse: collapse;
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto 2rem;
-}
-.round-comparison-table td {
-  border: 1px solid #ccc;
-  text-align: center;
-  padding: 0.25rem 0;
-}
-.round-comparison-table tbody tr:nth-child(even) {
-  background-color: #f5f5f5;
-}
-
 /* events page */
 
 .events-page {
@@ -416,6 +389,38 @@
   background-color: #f5f5f5;
 }
 
+/* bout profile */
+
+.bout-profile {
+  padding: 2rem;
+  text-align: center;
+}
+.bout-fighter-header {
+  display: flex;
+  justify-content: space-between;
+  max-width: 600px;
+  margin: 2rem auto;
+}
+.round-comparison-table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+}
+.round-comparison-table td {
+  border: 1px solid #ccc;
+  text-align: center;
+  padding: 0.25rem 0;
+}
+.round-comparison-table tbody tr:nth-child(even) {
+  background-color: #f5f5f5;
+}
+.bout-profile .back-button {
+    display: block;
+    margin-right: auto;
+    margin-left: 0;
+}
+
 @media (max-width: 600px) {
   .fighter-list {
     grid-template-columns: 1fr;
@@ -436,6 +441,18 @@
   }
   .fight-history-table {
     min-width: 700px;
+  }
+
+  .matchup-fighter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .matchup-fighter-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   
 }

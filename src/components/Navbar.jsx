@@ -18,15 +18,13 @@ function Navbar ({
                 <Link to="/fighters">
                     <button>Fighters</button>
                 </Link>
-                <button onClick={unlockAdmin}>
-                Admin
-                </button>
-
+                {!isAdmin && (
+                    <button onClick={unlockAdmin}>
+                        Admin
+                    </button>
+                )}
                  {isAdmin && (
                     <>  
-                        <Link to="/fighters/new">
-                            <button>Add Fighter</button>
-                        </Link>
                         <button onClick={lockAdmin}>
                             Exit
                         </button>

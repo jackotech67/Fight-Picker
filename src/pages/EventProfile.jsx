@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 function EventProfile() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [event, setEvent] = useState(null);
 
     useEffect(() => {
@@ -39,6 +41,9 @@ function EventProfile() {
 
     return (
         <main className="event-profile">
+            <button onClick={() => navigate(-1)} className="back-button">
+                ← Back
+            </button>
             <h1>{event.name}</h1>
             <p>
                 {new Date(event.eventDate).toLocaleDateString("en-NZ", {

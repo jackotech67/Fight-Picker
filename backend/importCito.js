@@ -72,6 +72,11 @@ async function importCitoData(eventSlug) {
     const boutResult = await boutResponse.json();
     const bouts = boutResult.data;
 
+    console.log(bouts.map(bout => ({
+        order: bout.boutOrder,
+        fighters: bout.fighters
+    })));
+
     for (const bout of bouts) {
         // INSERT / UPDATE EACH BOUT IN DATABASE
         const insertedBout = await pool.query(
@@ -175,7 +180,7 @@ async function importCitoData(eventSlug) {
                     first_name = EXCLUDED.first_name,
                     last_name = EXCLUDED.last_name,
                     weight_class = EXCLUDED.weight_class,
-                    country = EXCLUDED.country,
+                    country = COALESCE(EXCLUDED.country, fighters.country),
                     height = EXCLUDED.height,
                     reach = EXCLUDED.reach,
                     stance = EXCLUDED.stance,

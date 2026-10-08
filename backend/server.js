@@ -170,12 +170,12 @@ app.get("/events", async (req, res) => {
                     ' vs '
                 ) AS "mainEvent"
             FROM events
-            JOIN bouts
+            LEFT JOIN bouts
                 ON bouts.event_id = events.id
                 AND bouts.bout_order = 1001
-            JOIN bout_performance
+            LEFT JOIN bout_performance
                 ON bout_performance.bout_id = bouts.id
-            JOIN fighters
+            LEFT JOIN fighters
                 ON fighters.id = bout_performance.fighter_id
             WHERE events.event_date < CURRENT_DATE
             GROUP BY events.id
