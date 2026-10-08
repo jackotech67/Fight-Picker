@@ -1,7 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import FighterProfile from './pages/FighterProfile';
 import HomePage from './pages/HomePage';
-import AddFighterPage from './pages/AddFighterPage';
 import EditFighterPage from './pages/EditFighterPage';
 import BoutProfile from "./pages/BoutProfile";
 import FighterLibrary from "./pages/FighterLibrary";
@@ -78,7 +77,6 @@ function App() {
         } 
       />
       <Route path="/fighter/:id" element={<FighterProfile />} />
-      <Route path="/fighters/new" element={<AddFighterPage />} />
       <Route path="/fighters/:id/edit" element={<EditFighterPage />} />
       <Route path="/bouts/:id" element={<BoutProfile />} />
       <Route 

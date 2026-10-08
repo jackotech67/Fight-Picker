@@ -1,7 +1,8 @@
-function AddFighterForm({
+function FighterForm({
     firstName, setFirstName,
     lastName, setLastName,
     weightClass, setWeightClass, weightClasses,
+    country, setCountry,
     height, setHeight,
     reach, setReach,
     stance, setStance,
@@ -43,6 +44,14 @@ function AddFighterForm({
                             id="lastName"
                             value={lastName}
                             onChange={(e) => setLastName(e.target.value)}
+                        />
+                    </div>
+                    <div className="form-row">
+                        <label htmlFor="country">Country:</label>
+                        <input 
+                            id="country"
+                            value={country || ""}
+                            onChange={(e) => setCountry(e.target.value)} 
                         />
                     </div>
                     <select
@@ -237,7 +246,7 @@ function AddFighterForm({
 
                 <div className="add-fighter-button">
                     <button onClick={saveFighter}>
-                        {mode === "edit" ? "Save Changes" : "Add Fighter"}
+                        Save Changes
                     </button>
                 </div>
             </div>
@@ -245,4 +254,4 @@ function AddFighterForm({
         );
 }
 
-export default AddFighterForm;
+export default FighterForm;

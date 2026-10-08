@@ -6,10 +6,7 @@ function EditFighterPage() {
 
     return (
         <>
-            <FighterFormPage
-                mode="edit"
-                fighterId={id}
-            />  
+            <FighterFormPage fighterId={id} />  
         </>
     );
 }

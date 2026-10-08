@@ -1,15 +1,12 @@
-import Navbar from "../Navbar";
-import FighterCard from "../FighterCard";
+import Navbar from "../components/Navbar";
+import FighterCard from "../components/FighterCard";
 import { useState, useEffect } from "react";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 const weightClasses = [
-    "Womens Strawweight",
     "Flyweight",
-    "Women's Flyweight",
     "Bantamweight",
-    "Womens Bantamweight",
     "Featherweight",
     "Lightweight",
     "Welterweight",

@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import AddFighterForm from "./AddFighterForm";
+import FighterForm from "../components/FighterForm";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-function FighterFormPage({ mode, fighterId}) {
+function FighterFormPage({ fighterId}) {
 
     const weightClasses = [
     "Flyweight",
@@ -24,6 +24,7 @@ function FighterFormPage({ mode, fighterId}) {
     const [decisionWins, setDecisionWins] = useState("");
 
     const [weightClass, setWeightClass] = useState("");
+    const [country, setCountry] = useState("");
 
     const [height, setHeight] = useState("");
     const [reach, setReach] = useState("");
@@ -47,7 +48,6 @@ function FighterFormPage({ mode, fighterId}) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (mode !== "edit") return;
 
         fetch(`${API_URL}/fighters/${fighterId}`)
             .then((response) => response.json())
@@ -56,6 +56,7 @@ function FighterFormPage({ mode, fighterId}) {
                 setFirstName(fighter.firstName);
                 setLastName(fighter.lastName);
                 setWeightClass(fighter.weightClass);
+                setCountry(fighter.country || "");
 
                 setSubmissionWins(fighter.submissionWins);
                 setKnockoutWins(fighter.knockoutWins);
@@ -80,10 +81,9 @@ function FighterFormPage({ mode, fighterId}) {
                 setTakedownDefence(fighter.takedownDefence);
                 setSubmissionsPer15Min(fighter.submissionsPer15Min);
             });
-    }, [mode, fighterId]);
+    }, [fighterId]);
 
     function saveFighter() {
-        console.log("saveFighter called")
 
         if (firstName.trim() === "" || lastName.trim() === "") {
             alert("Please enter a first and last name");
@@ -98,15 +98,8 @@ function FighterFormPage({ mode, fighterId}) {
         return;
         }
 
-        const url =
-            mode === "edit"
-            ? `${API_URL}/fighters/${fighterId}`
-            : `${API_URL}/fighters`;
-            
-        const method = mode === "edit" ? "PUT" : "POST";
-
-        fetch(url, {
-            method,
+        fetch(`${API_URL}/fighters/${fighterId}`, {
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${sessionStorage.getItem("adminToken")}`
@@ -115,6 +108,7 @@ function FighterFormPage({ mode, fighterId}) {
                 firstName,
                 lastName,
                 weightClass,
+                country,
                 submissionWins,
                 knockoutWins,
                 decisionWins,
@@ -154,9 +148,8 @@ function FighterFormPage({ mode, fighterId}) {
 
     return (
         <div className="add-fighter-wrapper">
-            <h1>{mode === "add" ? "Add Fighter" : "Edit Fighter"}</h1>
-            
-            <AddFighterForm
+            <h1>Edit Fighter</h1>
+            <FighterForm
                 firstName={firstName}
                 setFirstName={setFirstName}
                 lastName={lastName}
@@ -164,6 +157,8 @@ function FighterFormPage({ mode, fighterId}) {
                 weightClass={weightClass}
                 setWeightClass={setWeightClass}
                 weightClasses={weightClasses}
+                country={country}
+                setCountry={setCountry}
                 submissionWins={submissionWins}
                 setSubmissionWins={setSubmissionWins}
                 knockoutWins={knockoutWins}
@@ -171,7 +166,6 @@ function FighterFormPage({ mode, fighterId}) {
                 decisionWins={decisionWins}
                 setDecisionWins={setDecisionWins}
                 saveFighter={saveFighter}
-                mode={mode}
                 height={height}
                 setHeight={setHeight}
                 reach={reach}

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { getCountryFlag } from "./utils/countryFlags";
+import { getCountryFlag } from "../utils/countryFlags";
 
 function FighterCard ({
     fighter, 

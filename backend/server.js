@@ -30,26 +30,7 @@ const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
 });
 
-app.get("/cito-test", async (req, res) => {
-    try {
-        const response = await fetch(
-            "https://api.citoapi.com/api/v1/ufc/bouts?hasStats=true&includeStats=true",
-            {
-                headers: {
-                    "x-api-key": process.env.CITO_API_KEY
-                }
-            }
-        );
-
-        const data = await response.json();
-        console.dir(data.data[0], { depth: null });
-        res.json(data);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Failed to fetch Cito data"});
-    }
-})
-
+// authenticate admin and generate access token
 app.post("/admin/login", async (req, res) => {
     const { password } = req.body;
 
@@ -73,9 +54,9 @@ app.post("/admin/login", async (req, res) => {
 function verifyAdmin(req, res, next) {
     const authHeader = req.headers.authorization;
 
-    if (!authHeader) {
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res.status(401).json({
-            message: "No token provided"
+            message: "Missing or invalid authorization header"
         });
     }
     const token = authHeader.split(" ")[1];
@@ -95,7 +76,7 @@ app.get("/admin/check", verifyAdmin, (req, res) => {
     res.json({ authenticated: true});
 });
 
-// get upcoming events for Home Page
+// get upcoming events and matchups for Home Page
 app.get("/events/upcoming", async (req, res) => {
     try {
         const eventResult = await pool.query(
@@ -269,6 +250,7 @@ app.get("/events/:id", async (req, res) => {
     }
 });
 
+// get fighters for Fighter Library with optional weight class filter
 app.get("/fighters", async (req, res) => {
     try {
         const { weightClass } = req.query;
@@ -315,6 +297,7 @@ app.get("/fighters", async (req, res) => {
     }
 });
 
+// get individual fighter profile and UFC wins
 app.get("/fighters/:id", async (req, res) => {
     try {
         const { id } = req.params;
@@ -422,6 +405,7 @@ app.get("/fighters/:id/history", async (req, res) => {
     }
 });
 
+// get individual fighter's UFC fight history
 app.get("/bouts/:id", async (req, res) => {
     try {
         const { id } = req.params;
@@ -504,135 +488,7 @@ app.get("/bouts/:id", async (req, res) => {
     }
 });
 
-app.post("/fighters", verifyAdmin, async (req, res) => {
-    try {
-        const {
-        firstName, 
-        lastName,
-        weightClass,
-        submissionWins, 
-        knockoutWins, 
-        decisionWins,
-        height, 
-        reach, 
-        stance,
-        age,
-        careerWins,
-        careerLosses,
-        careerDraws,
-        careerNoContests,
-        strikesPerMin,
-        strikingAccuracy,
-        strikesAbsorbedPerMin,
-        strikingDefence,
-        takedownsPer15Min,
-        takedownAccuracy,
-        takedownDefence,
-        submissionsPer15Min
-    } = req.body;
-
-    if (firstName.trim() === "" || lastName.trim() === "") {
-        return res.status(400).json({
-            message: "First and last name are required.",
-        })
-    }
-    if (submissionWins < 0 || knockoutWins < 0 || decisionWins < 0) {
-        return res.status(400).json({
-            message: "Stats cannot be negative"
-        })
-    }
-    if (!weightClasses.includes(weightClass)){
-        return res.status(400).json({
-            message: "Invalid weight class",
-        });
-    }
-
-    const result = await pool.query(
-        `
-        INSERT INTO fighters (
-            first_name,
-            last_name,
-            weight_class,
-            submission_wins,
-            knockout_wins,
-            decision_wins,
-            height,
-            reach, 
-            stance,
-            age,    
-            career_wins,
-            career_losses,
-            career_draws,
-            career_no_contests,
-            strikes_per_min,
-            striking_accuracy,
-            strikes_absorbed_per_min,
-            striking_defence,
-            takedowns_per_15_min,
-            takedown_accuracy,
-            takedown_defence,
-            submissions_per_15_min
-        )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22)
-        RETURNING
-            id,
-            first_name AS "firstName",
-            last_name AS "lastName",
-            weight_class AS "weightClass",
-            submission_wins AS "submissionWins",
-            knockout_wins AS "knockoutWins", 
-            decision_wins AS "decisionWins",
-            height, 
-            reach,
-            stance,
-            age,
-            career_wins AS "careerWins",
-            career_losses AS "careerLosses",
-            career_draws AS "careerDraws",
-            career_no_contests AS "careerNoContests",
-            strikes_per_min AS "strikesPerMin",
-            striking_accuracy AS "strikingAccuracy",
-            strikes_absorbed_per_min AS "strikesAbsorbedPerMin",
-            striking_defence AS "strikingDefence",
-            takedowns_per_15_min AS "takedownsPer15Min",
-            takedown_accuracy AS "takedownAccuracy",
-            takedown_defence AS "takedownDefence",
-            submissions_per_15_min AS "submissionsPer15Min"
-        `,
-        [
-            firstName,
-            lastName,
-            weightClass,
-            submissionWins,
-            knockoutWins, 
-            decisionWins,
-            height,
-            reach,
-            stance, 
-            age,
-            careerWins,
-            careerLosses,
-            careerDraws,
-            careerNoContests,
-            strikesPerMin,
-            strikingAccuracy,
-            strikesAbsorbedPerMin,
-            strikingDefence,
-            takedownsPer15Min,
-            takedownAccuracy,
-            takedownDefence,
-            submissionsPer15Min
-        ]
-    );
-    res.status(201).json(result.rows[0]);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            message: "Internal server error",
-        });
-    }
-});
-
+// delete individual fighter (admin only)
 app.delete("/fighters/:id", verifyAdmin, async (req, res) => {
     try {
         const { id } = req.params;
@@ -661,6 +517,7 @@ app.delete("/fighters/:id", verifyAdmin, async (req, res) => {
     }
 });
 
+// update individual fighter's details (admin only)
 app.put("/fighters/:id", verifyAdmin, async (req, res) => {
     try {
         const { id } = req.params; 
@@ -669,6 +526,7 @@ app.put("/fighters/:id", verifyAdmin, async (req, res) => {
             firstName,
             lastName,
             weightClass,
+            country,
             submissionWins,
             knockoutWins,
             decisionWins,
@@ -721,7 +579,8 @@ app.put("/fighters/:id", verifyAdmin, async (req, res) => {
                 takedowns_per_15_min = $19,
                 takedown_accuracy = $20,
                 takedown_defence = $21,
-                submissions_per_15_min = $22
+                submissions_per_15_min = $22,
+                country = $24
             WHERE id = $23
             RETURNING
                 id, 
@@ -746,7 +605,8 @@ app.put("/fighters/:id", verifyAdmin, async (req, res) => {
                 takedowns_per_15_min AS "takedownsPer15Min",
                 takedown_accuracy AS "takedownAccuracy",
                 takedown_defence AS "takedownDefence",
-                submissions_per_15_min AS "submissionsPer15Min"
+                submissions_per_15_min AS "submissionsPer15Min",
+                country
             `,
             [
                 firstName, 
@@ -771,7 +631,8 @@ app.put("/fighters/:id", verifyAdmin, async (req, res) => {
                 takedownAccuracy,
                 takedownDefence,
                 submissionsPer15Min,
-                id
+                id,
+                country
             ]
         );
 
@@ -791,6 +652,7 @@ app.put("/fighters/:id", verifyAdmin, async (req, res) => {
     }
 })
 
+// start Express server
 const PORT = process.env.PORT  ||  3000;
 app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
