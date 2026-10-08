@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getCountryFlag } from "../utils/countryFlags";
 import { formatHeight, formatRate, formatPercentage } from "../utils/formatStats";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 function FighterProfile() {
     const { id } = useParams();
+    const navigate = useNavigate();
 
     const [fighter, setFighter] = useState(null);
 
@@ -28,6 +30,12 @@ function FighterProfile() {
 
     return (
         <div className="fighter-profile">
+            <button
+                className="back-button"
+                onClick={() => navigate(-1)}
+            >
+                ← Back
+            </button>
             <div className="fighter-header">
                 <div>
                     <h1>{fighter.firstName} {fighter.lastName}</h1>
@@ -89,7 +97,16 @@ function FighterProfile() {
                                     "-"
                                     } 
                                 </td>
-                                <td>{fight.opponentFirstName} {fight.opponentLastName}</td>
+                                <td>
+                                    <Link
+                                        className="opponent-link"
+                                        to={`/fighter/${fight.opponentId}`}
+                                    >
+                                        {fight.opponentFirstName} {fight.opponentLastName}
+                                    </Link>
+                                    
+                                
+                                </td>
                                 <td>
                                     <Link to={`/bouts/${fight.boutId}`}>
                                         {fight.name}

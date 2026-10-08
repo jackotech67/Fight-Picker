@@ -24,7 +24,6 @@
   height: 1.5rem;
 }
 
-
 .title {
   text-align: center;
 }
@@ -155,6 +154,7 @@
     max-width: 900px;
     margin: 2rem auto;
     text-align: center;
+    border: 2px solid red;
 }
 .event-matchups {
     width: 100%;
@@ -178,6 +178,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
+    text-align: right;
 }
 .matchup-fighter-right {
     flex-direction: row-reverse;
@@ -188,7 +189,6 @@
   align-items: flex-end;
 }
 .matchup-fighter-stats-right {
-  align-items: left;
   justify-content: flex-start;
 }
 .matchup-fighter img {
@@ -422,6 +422,8 @@
 }
 
 @media (max-width: 600px) {
+
+  /* fighter library */
   .fighter-list {
     grid-template-columns: 1fr;
   }
@@ -429,6 +431,7 @@
     width: 50%;
   }
 
+  /* fighter profile */
   .fighter-content-wrap {
     flex-direction: column;
   }
@@ -443,17 +446,25 @@
     min-width: 700px;
   }
 
+
+  /* upcoming match ups home page */
+  .upcoming-event {
+    max-width: 600px;
+    border: 2px solid red;
+  }
+  .event-matchups {}
+  .bout-weight-class {}
+  .bout-matchup{}
   .matchup-fighter {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
   }
   .matchup-fighter-stats {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: block;
+    text-align: right;
   }
-  
+  .fighter-record {
+    text-align: right;
+  }
 }
 

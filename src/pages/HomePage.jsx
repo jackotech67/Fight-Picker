@@ -222,7 +222,7 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
                                     </td>
                                     <td>Striking defence %</td>
                                     <td className={getWinner(fighter2.strikingDefence, fighter1.strikingDefence)}>
-                                        {formatRate(fighter2.strikingDefence)}
+                                        {formatPercentage(fighter2.strikingDefence)}
                                     </td>
                                 </tr>
                                 <tr>

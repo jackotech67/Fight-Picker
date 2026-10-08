@@ -23,12 +23,10 @@ function Navbar ({
                         Admin
                     </button>
                 )}
-                 {isAdmin && (
-                    <>  
-                        <button onClick={lockAdmin}>
-                            Exit
-                        </button>
-                    </>
+                {isAdmin && (
+                    <button onClick={lockAdmin}>
+                        Exit
+                    </button>
                 )}
             </div>
 
