@@ -4,6 +4,23 @@ import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+function formatEventName(name) {
+    if (name.startsWith("UFC Fight Night")) {
+        return "UFC Fight Night";
+    }
+
+    return name.replace("Crypto.com ", "");
+}
+
+function formatEventDate(date) {
+    return new Date(date).toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit",
+        timeZone: "UTC"
+    });
+}
+
 function EventsPage() {
 
     const navigate = useNavigate();
@@ -29,14 +46,21 @@ function EventsPage() {
                         className="event-row"
                         key={event.id}
                     >
-                        <span>{event.name}</span>
+                        <span>{formatEventName(event.name)}</span>
                         <span>{event.mainEvent}</span>
-                        <span>
-                            {new Date(event.eventDate).toLocaleDateString("en-NZ", {
-                                day: "numeric",
-                                month: "long",
-                                year: "numeric"
-                            })}
+                        <span className="event-date">
+                            <span className="desktop-date">
+                                {new Date(event.eventDate).toLocaleDateString("en-NZ", {
+                                    day: "numeric",
+                                    month: "long",
+                                    year: "numeric",
+                                    timeZone: "UTC"
+                                })}
+                            </span>
+
+                            <span className="mobile-date">
+                                {formatEventDate(event.eventDate)}
+                            </span>
                         </span>
                     </Link>
                 ))}

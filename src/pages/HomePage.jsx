@@ -299,10 +299,16 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
                 )}
             </div> {/* comparison wrap */}
             <div className="card-selector">
-                <button onClick={() => setSelectedCard("Main Card")}>
+                <button 
+                    onClick={() => setSelectedCard("Main Card")}
+                    className={selectedCard === "Main Card" ? "active" : ""}    
+                >
                     Main Card
                 </button>
-                <button onClick={() => setSelectedCard("Prelims")}>
+                <button 
+                    onClick={() => setSelectedCard("Prelims")}
+                    className={selectedCard === "Prelims" ? "active" : ""}
+                >
                     Prelims
                 </button>
             </div>
