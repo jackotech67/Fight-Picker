@@ -7,11 +7,13 @@ const API_URL = import.meta.env.VITE_API_URL;
 function formatEventName(name) {
     if (name.startsWith("UFC Fight Night")) {
         return "UFC Fight Night";
+    } else if (name.startsWith("Crypto.com ")) {
+        return formatEventName(name.replace("Crypto.com ", ""));
+    } else if (/^UFC \d+/.test(name)) {
+        return name.match(/^UFC \d+/)[0];
     }
-    else if (name.startsWith("UFC 330")) {
-        return "UFC 330";
-    }
-    return name.replace("Crypto.com ", "");
+
+    return name;
 }
 
 function formatEventDate(date) {
