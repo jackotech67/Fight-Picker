@@ -27,7 +27,7 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
     const [upcomingEvent, setUpcomingEvent] = useState(null);
     const [selectedCard, setSelectedCard] = useState("Main Card");
 
-    const displayedBouts = upcomingEvent?.bouts.filter(
+    const displayedBouts = upcomingEvent?.bouts?.filter(
         (bout) => bout.cardSection === selectedCard
     ) || [];
 
