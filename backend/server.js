@@ -349,7 +349,11 @@ app.get("/fighters/:id", async (req, res) => {
                 career_losses AS "careerLosses",
                 career_draws AS "careerDraws",
                 career_no_contests AS "careerNoContests",
-                image_url AS "imageUrl"
+                image_url AS "imageUrl",
+                division_rank AS "divisionRank",
+                p4p_rank AS "p4pRank",
+                champion_status AS "championStatus",
+                is_active AS "isActive"
             FROM fighters
             WHERE id = $1
             `,

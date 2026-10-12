@@ -59,9 +59,16 @@ function BoutProfile() {
                 <button onClick={() => navigate(-1)} className="back-button">
                     ← Back
                 </button>
-                <h1>{bout.fighters[0].firstName} {bout.fighters[0].lastName} vs {bout.fighters[1].firstName} {bout.fighters[1].lastName}</h1>
-                <p>{bout.eventName}</p>
+                <h1>{bout.eventName}</h1>
                 <p>{formatDate(bout.eventDate)}</p>
+                {bout.fighters
+                    .filter((fighter) => fighter.outcome === "win")
+                    .map((fighter) => (
+                        <p key={fighter.id} className="bout-winner">
+                            🏆 {fighter.firstName} {fighter.lastName}
+                        </p>
+                    ))
+                }
                 <p>{bout.method} - Round {bout.resultRound} - {bout.resultTime}</p>
                 <button onClick={() => setHighlightStats(!highlightStats)}>
                     Highlight Stats

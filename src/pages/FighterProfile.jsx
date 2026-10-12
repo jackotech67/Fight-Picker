@@ -39,6 +39,12 @@ function FighterProfile() {
             <div className="fighter-header">
                 <div>
                     <h1>{fighter.firstName} {fighter.lastName}</h1>
+                    <h2>
+                        {   
+                            fighter.championStatus === "champion" ? "C"
+                            : fighter.divisionRank != null ? `#${fighter.divisionRank}` : "NR"
+                        } 
+                    </h2>
                     <h2>{fighter.weightClass}</h2>
                 </div>
                 <h2>{fighter.careerWins} - {fighter.careerLosses} - {fighter.careerDraws}</h2>

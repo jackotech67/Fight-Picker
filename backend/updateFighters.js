@@ -17,9 +17,6 @@ async function updateFighterProfiles() {
         const result = await pool.query(`
             SELECT id, first_name, last_name, cito_slug
             FROM fighters
-            WHERE cito_slug IS NOT NULL
-            AND last_name = 'Buckley'
-            AND first_name = 'Joaquin'
         `);
 
         for (const fighter of result.rows) {
@@ -33,18 +30,40 @@ async function updateFighterProfiles() {
             );
 
             const data = await response.json();
-            const imageUrl = data.data?.headshotUrl;
+            
+            const fighterProfile = data.data;
 
-            if (!imageUrl) {
-                console.log(`No image found for ${fighter.first_name} ${fighter.last_name}`);
-                continue;
-            }
+            const imageUrl = fighterProfile?.headshotUrl;
+            const isActive = fighterProfile?.isActive;
+            const championStatus = fighterProfile?.championStatus;
+
+            const divisionRank = fighterProfile?.rankings?.find(
+                (ranking) => 
+                    ranking.system === "media" &&
+                    ranking.division === fighterProfile.division
+            )?.rank ?? null;
+            
+            const p4pRank = fighterProfile?.rankings?.find(
+                (ranking) => 
+                    ranking.system === "media" &&
+                    ranking.division.includes("Pound-for-Pound")
+            )?.rank ?? null;
 
             await pool.query(`
                 UPDATE fighters
-                SET image_url = $1
-                WHERE id = $2
-            `, [imageUrl, fighter.id]);
+                SET image_url = COALESCE($1, image_url),
+                    is_active = $2,
+                    division_rank = $3,
+                    p4p_rank = $4,
+                    champion_status = $5
+                WHERE id = $6
+            `, [
+                imageUrl, 
+                isActive,
+                divisionRank,
+                p4pRank,
+                championStatus,
+                fighter.id]);
 
             console.log(`Updated ${fighter.first_name} ${fighter.last_name}`);
             await delay(2500);
