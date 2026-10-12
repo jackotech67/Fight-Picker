@@ -18,6 +18,8 @@ async function updateFighterProfiles() {
             SELECT id, first_name, last_name, cito_slug
             FROM fighters
             WHERE cito_slug IS NOT NULL
+            AND last_name = 'Buckley'
+            AND first_name = 'Joaquin'
         `);
 
         for (const fighter of result.rows) {
@@ -32,6 +34,11 @@ async function updateFighterProfiles() {
 
             const data = await response.json();
             const imageUrl = data.data?.headshotUrl;
+
+            if (!imageUrl) {
+                console.log(`No image found for ${fighter.first_name} ${fighter.last_name}`);
+                continue;
+            }
 
             await pool.query(`
                 UPDATE fighters

@@ -127,7 +127,22 @@ app.get("/events/upcoming", async (req, res) => {
                 fighters.career_wins AS "careerWins",
                 fighters.career_losses AS "careerLosses",
                 fighters.career_draws AS "careerDraws",
-                fighters.image_url AS "imageUrl"
+                fighters.image_url AS "imageUrl",
+                fighters.height,
+                fighters.reach,
+                fighters.stance,
+                fighters.age,
+                fighters.submission_wins AS "submissionWins",
+                fighters.knockout_wins AS "knockoutWins",
+                fighters.decision_wins AS "decisionWins",
+                fighters.strikes_per_min AS "strikesPerMin",
+                fighters.striking_accuracy AS "strikingAccuracy",
+                fighters.strikes_absorbed_per_min AS "strikesAbsorbedPerMin",
+                fighters.striking_defence AS "strikingDefence",
+                fighters.takedowns_per_15_min AS "takedownsPer15Min",
+                fighters.takedown_accuracy AS "takedownAccuracy",
+                fighters.takedown_defence AS "takedownDefence",
+                fighters.submissions_per_15_min AS "submissionsPer15Min"
             FROM bout_performance
             JOIN fighters
                 ON bout_performance.fighter_id = fighters.id

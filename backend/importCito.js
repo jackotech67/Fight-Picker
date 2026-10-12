@@ -160,13 +160,14 @@ async function importCitoData(eventSlug) {
                     career_draws,
                     career_no_contests,
                     cito_id,
-                    cito_slug
+                    cito_slug,
+                    image_url
                 )
                 VALUES (
                     $1, $2, $3, $4, $5, $6, $7, $8, 
                     $9, $10, $11, $12, $13, $14, $15, $16,
                     $17, $18, $19, $20, $21, $22, $23, $24,
-                    $25
+                    $25, $26
                     )
                 ON CONFLICT (cito_slug)
                 DO UPDATE SET
@@ -193,7 +194,8 @@ async function importCitoData(eventSlug) {
                     career_losses = EXCLUDED.career_losses,
                     career_draws = EXCLUDED.career_draws,
                     career_no_contests = EXCLUDED.career_no_contests,
-                    cito_id = EXCLUDED.cito_id
+                    cito_id = EXCLUDED.cito_id,
+                    image_url = COALESCE(EXCLUDED.image_url, fighters.image_url)
                 RETURNING *
                 `,
                 [
@@ -221,7 +223,8 @@ async function importCitoData(eventSlug) {
                     fighterProfile.recordDraws,
                     fighterProfile.recordNoContest,
                     fighterProfile.id,
-                    fighterProfile.slug
+                    fighterProfile.slug,
+                    fighterProfile.headshotUrl ?? null
                 ]
             );
             const fighterId = insertedFighter.rows[0].id;

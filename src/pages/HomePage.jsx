@@ -6,23 +6,8 @@ import { formatHeight, formatRate, formatPercentage } from '../utils/formatStats
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-const weightClasses = [
-    "Womens Strawweight",
-    "Flyweight",
-    "Women's Flyweight",
-    "Bantamweight",
-    "Womens Bantamweight",
-    "Featherweight",
-    "Lightweight",
-    "Welterweight",
-    "Middleweight",
-    "Light Heavyweight",
-    "Heavyweight",
-];
-
 function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
 
-    const [fighters, setFighters] = useState([]);
     const comparisonRef = useRef(null);
     const [upcomingEvent, setUpcomingEvent] = useState(null);
     const [selectedCard, setSelectedCard] = useState("Main Card");
@@ -30,12 +15,6 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
     const displayedBouts = upcomingEvent?.bouts?.filter(
         (bout) => bout.cardSection === selectedCard
     ) || [];
-
-    useEffect(() => {
-        fetch(`${API_URL}/fighters`) 
-        .then((response) => response.json()) 
-        .then((data) => setFighters(data)); 
-    }, []);
 
     useEffect(() => {
         fetch(`${API_URL}/events/upcoming`)
@@ -51,42 +30,18 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
 
     const [highlightStats, setHighlightStats] = useState(false);
 
-    const [pastEventSlug, setPastEventSlug] = useState("");
-
     function compareFighters(fighter1, fighter2) {
-        const fullFighter1 = fighters.find(
-            (fighter) => fighter.id === fighter1.id
-        );
-
-        const fullFighter2 = fighters.find(
-            (fighter) => fighter.id === fighter2.id
-        );
-
-        setFighter1(fullFighter1);
-        setFighter2(fullFighter2);
+        setFighter1(fighter1);
+        setFighter2(fighter2);
         setShowComparison(true);
 
-        comparisonRef.current?.scrollIntoView({
-            behavior: "smooth"
-        });
+        comparisonRef.current?.scrollIntoView({ behavior: "smooth" });
     }
 
     function resetMatchup() {
         setFighter1(null);
         setFighter2(null);
         setShowComparison(false);
-    }
-
-    async function importUpcoming() {
-        const response = await fetch(`${API_URL}/admin/import/upcoming`, {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${sessionStorage.getItem("adminToken")}`
-            }
-        });
-
-        const data = await response.json();
-        setAdminMessage(data.message);
     }
 
     function getWinner(value1, value2) {
