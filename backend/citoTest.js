@@ -2,20 +2,20 @@ require("dotenv").config();
 
 async function testCito() {
     const response = await fetch(
-        "https://api.citoapi.com/api/v1/ufc/fighters/arman-tsarukyan",
+        "https://api.citoapi.com/api/v1/ufc/fighters/brendan-allen",
         {
             headers: {
-                "x-api-key": process.env.CITO_API_KEY
+                "X-API-KEY": process.env.CITO_API_KEY
             }
         }
     );
 
-    const data = await response.json();
-    const fighter = data.data;
+    if (!response.ok) {
+        throw new Error(`Cito API error: ${response.status}`);
+    }
 
-    console.log(
-        data.data.rankings
-    );
+    const data = await response.json();
+    console.log(JSON.stringify(data, null, 2));
 }
 
 testCito();
