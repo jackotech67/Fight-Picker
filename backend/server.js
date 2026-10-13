@@ -128,6 +128,7 @@ app.get("/events/upcoming", async (req, res) => {
                 fighters.career_losses AS "careerLosses",
                 fighters.career_draws AS "careerDraws",
                 fighters.image_url AS "imageUrl",
+                fighters.division_rank AS "divisionRank",
                 fighters.height,
                 fighters.reach,
                 fighters.stance,

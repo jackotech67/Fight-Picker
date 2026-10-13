@@ -275,7 +275,7 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
                             <>
                                 <tr className="bout-weight-class" key={`${bout.id}-weight`}>
                                     <th colSpan="3">
-                                        {bout.fighters[0]?.weightClass} 
+                                        {bout.fighters[0]?.weightClass || bout.fighters[1]?.weightClass}
                                     </th>
                                 </tr>
 
@@ -284,12 +284,13 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
                                         <div className="matchup-fighter matchup-fighter-left">
                                             {bout.fighters[0]?.imageUrl && (
                                                 <img 
-                                                    src={bout.fighters[0].imageUrl} 
-                                                    alt={`${bout.fighters[0].firstName} ${bout.fighters[0].lastName}`} 
+                                                    src={bout.fighters[0].imageUrl || "/placeholder-fighter.png"} 
+                                                    alt={`${bout.fighters[0]?.firstName} ${bout.fighters[0]?.lastName}`} 
                                                 />
                                             )} 
                                             <div className='matchup-fighter-stats matchup-fighter-stats-left'>
                                                 <Link to={`/fighter/${bout.fighters[0]?.id}`}>
+                                                    {bout.fighters[0]?.divisionRank != null && `#${bout.fighters[0].divisionRank} `}
                                                     {bout.fighters[0]?.firstName} {bout.fighters[0]?.lastName}
                                                 </Link>
                                                 <div className="fighter-record">
@@ -314,12 +315,13 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
                                         <div className="matchup-fighter matchup-fighter-right">
                                             {bout.fighters[1]?.imageUrl && (
                                                 <img 
-                                                    src={bout.fighters[1].imageUrl} 
+                                                    src={bout.fighters[1].imageUrl || "/placeholder-fighter.png"} 
                                                     alt={`${bout.fighters[1].firstName} ${bout.fighters[1].lastName}`} 
                                                 />
                                             )}
                                             <div className='matchup-fighter-stats matchup-fighter-stats-left'>
                                                 <Link to={`/fighter/${bout.fighters[1]?.id}`}>
+                                                    {bout.fighters[1]?.divisionRank != null && `#${bout.fighters[1].divisionRank} `}
                                                     {bout.fighters[1]?.firstName} {bout.fighters[1]?.lastName}
                                                 </Link>
                                                 <div className="fighter-record">

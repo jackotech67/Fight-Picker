@@ -20,6 +20,9 @@ async function updateFighterProfiles() {
         `);
 
         for (const fighter of result.rows) {
+
+            console.log(`Fetching ${fighter.first_name} ${fighter.last_name}`);
+            
             const response = await fetch(
                 `https://api.citoapi.com/api/v1/ufc/fighters/${fighter.cito_slug}`,
                 {
@@ -28,6 +31,10 @@ async function updateFighterProfiles() {
                     }
                 }
             );
+
+            if (!response.ok) {
+                throw new Error(`Cito API error: ${response.status}`);
+            }
 
             const data = await response.json();
             
@@ -39,14 +46,14 @@ async function updateFighterProfiles() {
 
             const divisionRank = fighterProfile?.rankings?.find(
                 (ranking) => 
-                    ranking.system === "media" &&
+                    ranking.system === "meta" &&
                     ranking.division === fighterProfile.division
             )?.rank ?? null;
             
             const p4pRank = fighterProfile?.rankings?.find(
                 (ranking) => 
-                    ranking.system === "media" &&
-                    ranking.division.includes("Pound-for-Pound")
+                    ranking.system === "meta" &&
+                    ranking.division?.includes("Pound-for-Pound")
             )?.rank ?? null;
 
             await pool.query(`
