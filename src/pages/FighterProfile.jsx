@@ -72,7 +72,20 @@ function FighterProfile() {
                     <p>Submissions per 15 min: {formatRate(fighter.submissionsPer15Min)}</p>
                 </div>
                 <div className="fighter-notes">
-                    <h2>Notes</h2>
+                    <h2>Wins by Method</h2>
+
+                    {[
+                        { label: "KO/TKO", wins: fighter.knockoutWins },
+                        { label: "Submissions", wins: fighter.submissionWins },
+                        { label: "Decisions", wins: fighter.decisionWins }
+                    ].map(({ label, wins }) => (
+                        <p key={label}>
+                            {label}: {wins ?? 0} (
+                            {fighter.careerWins > 0
+                                ? ((wins ?? 0) / fighter.careerWins * 100).toFixed(0)
+                                : 0}%)
+                        </p>
+                    ))}
                 </div>
             </div>
             <div className="fighter-history">
