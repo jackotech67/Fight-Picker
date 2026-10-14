@@ -123,6 +123,18 @@ async function importCitoData(eventSlug) {
             const stats = fighterProfile.stats;
             const winsByMethod = stats?.winsByMethod;
 
+            const divisionRank = fighterProfile?.rankings?.find(
+                ranking =>
+                    ranking.system === "meta" &&
+                    ranking.division === fighterProfile.division
+            )?.rank ?? null;
+
+            const p4pRank = fighterProfile?.rankings?.find(
+                ranking =>
+                    ranking.system === "meta" &&
+                    ranking.division?.includes("Pound-for-Pound")
+            )?.rank ?? null;
+
             const submissionWins = winsByMethod?.sub?.count ?? 0;
             const knockoutWins = winsByMethod?.["ko-tko"]?.count ?? 0;
             const decisionWins = winsByMethod?.dec?.count ?? 0;
@@ -161,13 +173,18 @@ async function importCitoData(eventSlug) {
                     career_no_contests,
                     cito_id,
                     cito_slug,
-                    image_url
+                    image_url,
+                    body_image_url,
+                    is_active,
+                    division_rank,
+                    p4p_rank,
+                    champion_status
                 )
                 VALUES (
                     $1, $2, $3, $4, $5, $6, $7, $8, 
                     $9, $10, $11, $12, $13, $14, $15, $16,
                     $17, $18, $19, $20, $21, $22, $23, $24,
-                    $25, $26
+                    $25, $26, $27, $28, $29, $30, $31
                     )
                 ON CONFLICT (cito_slug)
                 DO UPDATE SET
@@ -195,7 +212,12 @@ async function importCitoData(eventSlug) {
                     career_draws = EXCLUDED.career_draws,
                     career_no_contests = EXCLUDED.career_no_contests,
                     cito_id = EXCLUDED.cito_id,
-                    image_url = COALESCE(EXCLUDED.image_url, fighters.image_url)
+                    image_url = COALESCE(EXCLUDED.image_url, fighters.image_url),
+                    body_image_url = COALESCE(EXCLUDED.body_image_url, fighters.body_image_url),
+                    is_active = COALESCE(EXCLUDED.is_active, fighters.is_active),
+                    division_rank = COALESCE(EXCLUDED.division_rank, fighters.division_rank),
+                    p4p_rank = COALESCE(EXCLUDED.p4p_rank, fighters.p4p_rank),
+                    champion_status = COALESCE(EXCLUDED.champion_status, fighters.champion_status)
                 RETURNING *
                 `,
                 [
@@ -224,7 +246,12 @@ async function importCitoData(eventSlug) {
                     fighterProfile.recordNoContest,
                     fighterProfile.id,
                     fighterProfile.slug,
-                    fighterProfile.headshotUrl ?? null
+                    fighterProfile.headshotUrl ?? null,
+                    fighterProfile.bodyImageUrl ?? null,
+                    fighterProfile.isActive ?? null,
+                    divisionRank,
+                    p4pRank,
+                    fighterProfile.championStatus ?? null
                 ]
             );
             const fighterId = insertedFighter.rows[0].id;

@@ -11,25 +11,16 @@ function FighterCard ({
 
     return (
         <div className="fighter-card">
-
-            <h2>
-                <Link to={`/fighter/${fighter.id}`}>
+            <Link to={`/fighter/${fighter.id}`} className="fighter-card-link">
+                <img
+                    src={fighter.bodyImageUrl || "/placeholder-fighter-body.png"}
+                    alt={`${fighter.firstName} ${fighter.lastName}`}
+                    loading="lazy"
+                />
+                <h2>
                     {fighter.firstName} {fighter.lastName}
-                </Link>
-            </h2>
-
-            <p>{fighter.weightClass}</p>
-
-            <div className="fighter-record">
-                <p>
-                    {fighter.careerWins}-{fighter.careerLosses}-{fighter.careerDraws}
-                </p>
-            </div>
-            <p>
-                {getCountryFlag(fighter.country)} 
-            </p>
-
-            
+                </h2>
+            </Link>
 
             {isAdmin && (
                 <div className="admin-buttons">

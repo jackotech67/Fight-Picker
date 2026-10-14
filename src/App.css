@@ -218,6 +218,23 @@
     display: block;
     margin: 0 auto;
 }
+.fighter-card-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+}
+
+.fighter-card-link img {
+    width: 100%;
+    height: 250px;
+    object-fit: contain;
+}
+
+.fighter-card-link h2 {
+    text-align: center;
+}
 
 /* fighter profile page */
 

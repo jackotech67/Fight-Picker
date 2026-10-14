@@ -301,9 +301,11 @@ app.get("/fighters", async (req, res) => {
             career_losses As "careerLosses",
             career_draws AS "careerDraws",
             career_no_contests AS "careerNoContests", 
-            image_url AS "imageUrl"
+            image_url AS "imageUrl",
+            body_image_url AS "bodyImageUrl"
         FROM fighters
-        WHERE ($1::text IS NULL OR weight_class = $1)
+        WHERE is_active = TRUE 
+        AND ($1::text IS NULL OR weight_class = $1)
         ORDER BY last_name
         `, [weightClass || null]
     );

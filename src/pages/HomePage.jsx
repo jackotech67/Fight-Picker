@@ -282,12 +282,14 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
                                 <tr className="bout-matchup" key={bout.id}>
                                     <td>
                                         <div className="matchup-fighter matchup-fighter-left">
-                                            {bout.fighters[0]?.imageUrl && (
-                                                <img 
-                                                    src={bout.fighters[0].imageUrl || "/placeholder-fighter.png"} 
-                                                    alt={`${bout.fighters[0]?.firstName} ${bout.fighters[0]?.lastName}`} 
-                                                />
-                                            )} 
+                                            <img
+                                                src={bout.fighters[0]?.imageUrl || "/placeholder-fighter-headshot.png"}
+                                                alt={`${bout.fighters[0]?.firstName} ${bout.fighters[0]?.lastName}`}
+                                                onError={(e) => {
+                                                    e.currentTarget.onerror = null;
+                                                    e.currentTarget.src = "/placeholder-fighter.png";
+                                                }}
+                                            />
                                             <div className='matchup-fighter-stats matchup-fighter-stats-left'>
                                                 <Link to={`/fighter/${bout.fighters[0]?.id}`}>
                                                     {bout.fighters[0]?.divisionRank != null && `#${bout.fighters[0].divisionRank} `}
@@ -313,12 +315,14 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
                                     </td>
                                     <td>
                                         <div className="matchup-fighter matchup-fighter-right">
-                                            {bout.fighters[1]?.imageUrl && (
-                                                <img 
-                                                    src={bout.fighters[1].imageUrl || "/placeholder-fighter.png"} 
-                                                    alt={`${bout.fighters[1].firstName} ${bout.fighters[1].lastName}`} 
-                                                />
-                                            )}
+                                            <img
+                                                src={bout.fighters[1]?.imageUrl || "/placeholder-fighter-headshot.png"}
+                                                alt={`${bout.fighters[1]?.firstName} ${bout.fighters[1]?.lastName}`}
+                                                onError={(e) => {
+                                                    e.currentTarget.onerror = null;
+                                                    e.currentTarget.src = "/placeholder-fighter.png";
+                                                }}
+                                            />
                                             <div className='matchup-fighter-stats matchup-fighter-stats-left'>
                                                 <Link to={`/fighter/${bout.fighters[1]?.id}`}>
                                                     {bout.fighters[1]?.divisionRank != null && `#${bout.fighters[1].divisionRank} `}

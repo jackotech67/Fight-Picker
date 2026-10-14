@@ -22,7 +22,7 @@ async function updateFighterProfiles() {
         for (const fighter of result.rows) {
 
             console.log(`Fetching ${fighter.first_name} ${fighter.last_name}`);
-            
+
             const response = await fetch(
                 `https://api.citoapi.com/api/v1/ufc/fighters/${fighter.cito_slug}`,
                 {
@@ -41,6 +41,7 @@ async function updateFighterProfiles() {
             const fighterProfile = data.data;
 
             const imageUrl = fighterProfile?.headshotUrl;
+            const bodyImageUrl = fighterProfile?.bodyImageUrl;
             const isActive = fighterProfile?.isActive;
             const championStatus = fighterProfile?.championStatus;
 
@@ -59,18 +60,22 @@ async function updateFighterProfiles() {
             await pool.query(`
                 UPDATE fighters
                 SET image_url = COALESCE($1, image_url),
-                    is_active = $2,
-                    division_rank = $3,
-                    p4p_rank = $4,
-                    champion_status = $5
-                WHERE id = $6
+                    body_image_url = COALESCE($2, body_image_url),
+                    is_active = $3,
+                    division_rank = $4,
+                    p4p_rank = $5,
+                    champion_status = $6
+                WHERE id = $7
             `, [
-                imageUrl, 
+                imageUrl,
+                bodyImageUrl, 
                 isActive,
                 divisionRank,
                 p4pRank,
                 championStatus,
-                fighter.id]);
+                fighter.id
+                ]
+            );
 
             console.log(`Updated ${fighter.first_name} ${fighter.last_name}`);
             await delay(2500);
