@@ -273,7 +273,7 @@ app.get("/events/:id", async (req, res) => {
 // get fighters for Fighter Library with optional weight class filter
 app.get("/fighters", async (req, res) => {
     try {
-        const { weightClass } = req.query;
+        const { weightClass, search } = req.query;
         const result = await pool.query(
         `
         SELECT 
@@ -305,9 +305,14 @@ app.get("/fighters", async (req, res) => {
             body_image_url AS "bodyImageUrl"
         FROM fighters
         WHERE is_active = TRUE 
-        AND ($1::text IS NULL OR weight_class = $1)
+        AND (
+            ($2::text IS NOT NULL AND
+                (first_name || ' ' || last_name) ILIKE '%' || $2 || '%')
+            OR 
+            ($2::text IS NULL AND weight_class = $1)
+        )
         ORDER BY last_name
-        `, [weightClass || null]
+        `, [weightClass || null, search || null]
     );
 
     res.json(result.rows);

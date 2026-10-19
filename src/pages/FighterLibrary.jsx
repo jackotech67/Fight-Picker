@@ -1,6 +1,7 @@
 import Navbar from "../components/Navbar";
 import FighterCard from "../components/FighterCard";
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -18,19 +19,70 @@ const weightClasses = [
 function FighterLibrary({ isAdmin, unlockAdmin, lockAdmin}) {
 
     const [fighters, setFighters] = useState([]);
-    const [selectedWeightClass, setSelectedWeightClass] = useState("Lightweight");
-    const [searchTerm, setSearchTerm] = useState("");
+    const [searchParams, setSearchParams] = useSearchParams();
 
+    const selectedWeightClass = searchParams.get("weightClass") || "Lightweight";
+    const searchTerm = searchParams.get("search") || "";
+
+    function setSelectedWeightClass(weightClass) {
+        setSearchParams(prev => {
+            const params = new URLSearchParams(prev);
+            params.set("weightClass", weightClass);
+            return params;
+        });
+    }
+
+    function setSearchTerm(search) {
+        setSearchParams(prev => {
+            const params = new URLSearchParams(prev);
+
+            if (search) {
+                params.set("search", search);
+            }
+            else {
+                params.delete("search");
+            }
+
+            return params;
+        }, { replace: true });
+    }
+
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+
+    // wait 300ms after typing
+    useEffect(() => { 
+        const timeout = setTimeout(() => {
+            setDebouncedSearch(searchTerm);
+        }, 300);
+
+        return () => clearTimeout(timeout);
+    }, [searchTerm]);
+
+    // fetch fighters
     useEffect(() => {
-        fetch(`${API_URL}/fighters?weightClass=${encodeURIComponent(selectedWeightClass)}`)
-            .then((response) => response.json())
-            .then((data) => setFighters(data));
-    }, [selectedWeightClass]);
+        const controller = new AbortController();
+        const params = new URLSearchParams();
 
-    const filteredFighters = fighters.filter((fighter => {
-        const fullName = `${fighter.firstName} ${fighter.lastName}`.toLowerCase();
-        return fullName.includes(searchTerm.toLowerCase());
-    }));
+        if (debouncedSearch.trim()) {
+            params.set("search", debouncedSearch.trim());
+        } 
+        else {
+            params.set("weightClass", selectedWeightClass);
+        }
+
+        fetch(`${API_URL}/fighters?${params.toString()}`, {
+            signal: controller.signal
+        })
+            .then((response) => response.json())
+            .then((data) => setFighters(data))
+            .catch((error) => {
+                if (error.name !== "AbortError") {
+                    console.error("Failed to fetch fighters:", error);
+                }
+            });
+
+        return () => controller.abort();
+    }, [selectedWeightClass, debouncedSearch]);
 
     function deleteFighter(idToDelete) {
         console.log("Deleting fighter:", idToDelete);
@@ -84,7 +136,7 @@ function FighterLibrary({ isAdmin, unlockAdmin, lockAdmin}) {
             </div>
 
             <div className="fighter-list">
-                {filteredFighters.map((fighter) => (
+                {fighters.map((fighter) => (
                     <FighterCard
                         key={fighter.id}
                         fighter={fighter}
