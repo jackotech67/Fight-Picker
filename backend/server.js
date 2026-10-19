@@ -278,6 +278,9 @@ app.get("/events/:id", async (req, res) => {
 app.get("/fighters", async (req, res) => {
     try {
         const { weightClass, search } = req.query;
+        const limit = 12;
+        const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+        const offset = (page - 1) * limit;
         const result = await pool.query(
         `
         SELECT 
@@ -315,8 +318,9 @@ app.get("/fighters", async (req, res) => {
             OR 
             ($2::text IS NULL AND weight_class = $1)
         )
-        ORDER BY last_name
-        `, [weightClass || null, search || null]
+        ORDER BY last_name, first_name, id
+        LIMIT $3 OFFSET $4
+        `, [weightClass || null, search || null, limit, offset]
     );
 
     res.json(result.rows);

@@ -188,6 +188,10 @@
 .fighter-library h1 {
   margin-left: 1rem;
 }
+.fighter-library button.load-more-button {
+  display: block;
+  margin: 24px auto;
+}
 
 /* fighter card */
 

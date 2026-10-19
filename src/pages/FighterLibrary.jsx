@@ -19,12 +19,18 @@ const weightClasses = [
 function FighterLibrary({ isAdmin, unlockAdmin, lockAdmin}) {
 
     const [fighters, setFighters] = useState([]);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
 
     const selectedWeightClass = searchParams.get("weightClass") || "Lightweight";
     const searchTerm = searchParams.get("search") || "";
 
     function setSelectedWeightClass(weightClass) {
+        setPage(1);
+        setFighters([]);
+        setHasMore(true);
         setSearchParams(prev => {
             const params = new URLSearchParams(prev);
             params.set("weightClass", weightClass);
@@ -33,6 +39,9 @@ function FighterLibrary({ isAdmin, unlockAdmin, lockAdmin}) {
     }
 
     function setSearchTerm(search) {
+        setPage(1);
+        setFighters([]);
+        setHasMore(true);
         setSearchParams(prev => {
             const params = new URLSearchParams(prev);
 
@@ -61,28 +70,46 @@ function FighterLibrary({ isAdmin, unlockAdmin, lockAdmin}) {
     // fetch fighters
     useEffect(() => {
         const controller = new AbortController();
+        if (searchTerm !== debouncedSearch) {
+            return () => controller.abort();
+        }
         const params = new URLSearchParams();
 
         if (debouncedSearch.trim()) {
             params.set("search", debouncedSearch.trim());
-        } 
+        }
         else {
             params.set("weightClass", selectedWeightClass);
         }
 
+        params.set("page", page);
+        setLoading(true);
+
         fetch(`${API_URL}/fighters?${params.toString()}`, {
             signal: controller.signal
         })
-            .then((response) => response.json())
-            .then((data) => setFighters(data))
+            .then((response) => {
+                if (!response.ok) throw new Error("Failed to fetch fighters");
+                return response.json();
+            })
+            .then((data) => {
+                setFighters((previous) => 
+                    page === 1 ? data : [...previous, ...data]
+                );
+                setHasMore(data.length === 12);
+            })
             .catch((error) => {
                 if (error.name !== "AbortError") {
-                    console.error("Failed to fetch fighters:", error);
+                    console.error("Failed to fetch fighters", error);
+                }
+            })
+            .finally(() => {
+                if (!controller.signal.aborted) {
+                    setLoading(false);
                 }
             });
-
-        return () => controller.abort();
-    }, [selectedWeightClass, debouncedSearch]);
+            return () => controller.abort();
+    }, [selectedWeightClass, searchTerm, debouncedSearch, page]);
 
     function deleteFighter(idToDelete) {
         console.log("Deleting fighter:", idToDelete);
@@ -145,6 +172,16 @@ function FighterLibrary({ isAdmin, unlockAdmin, lockAdmin}) {
                     />
                 ))}
             </div>
+
+            {hasMore && (
+                <button
+                    className="load-more-button"
+                    onClick={() => setPage((previous) => previous + 1)}
+                    disabled={loading || searchTerm !== debouncedSearch}
+                >
+                    {loading ? "Loading..." : "Load More"}
+                </button>
+            )}
 
         </div>
     )
