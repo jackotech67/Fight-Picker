@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import FighterForm from "../components/FighterForm";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-function FighterFormPage({ fighterId}) {
+function FighterFormPage() {
+
+    const { id: fighterId } = useParams();
 
     const weightClasses = [
     "Flyweight",
@@ -22,6 +24,7 @@ function FighterFormPage({ fighterId}) {
     const [submissionWins, setSubmissionWins] = useState("");
     const [knockoutWins, setKnockoutWins] = useState("");
     const [decisionWins, setDecisionWins] = useState("");
+    const [divisionRank, setDivisionRank] = useState("");
 
     const [weightClass, setWeightClass] = useState("");
     const [country, setCountry] = useState("");
@@ -55,6 +58,13 @@ function FighterFormPage({ fighterId}) {
 
                 setFirstName(fighter.firstName);
                 setLastName(fighter.lastName);
+                setDivisionRank(
+                    fighter.championStatus === "champion"
+                    ? "C"
+                    : fighter.divisionRank != null
+                    ? String(fighter.divisionRank)
+                    : "NR"
+                );
                 setWeightClass(fighter.weightClass);
                 setCountry(fighter.country || "");
 
@@ -98,6 +108,22 @@ function FighterFormPage({ fighterId}) {
         return;
         }
 
+        const rankInput = String(divisionRank).trim().toUpperCase();
+
+        if (!["C", "NR", ""].includes(rankInput) &&
+            !/^(?:[1-9]|1[0-5])$/.test(rankInput)) {
+            alert("Rank must be C, NR, or a number from 1 to 15");
+            return;
+        }
+
+        const championStatus = rankInput === "C" ? "champion" : null;
+        const numericRank = /^[0-9]+$/.test(rankInput)
+            ? Number(rankInput)
+            : null;
+        
+        const toNumberOrNull = (value) =>
+            value === "" || value == null ? null : Number(value);
+
         fetch(`${API_URL}/fighters/${fighterId}`, {
             method: "PUT",
             headers: {
@@ -107,27 +133,29 @@ function FighterFormPage({ fighterId}) {
             body: JSON.stringify({
                 firstName,
                 lastName,
+                divisionRank: numericRank,
+                championStatus,
                 weightClass,
                 country,
-                submissionWins,
-                knockoutWins,
-                decisionWins,
-                height,
-                reach,
+                submissionWins: toNumberOrNull(submissionWins),
+                knockoutWins: toNumberOrNull(knockoutWins),
+                decisionWins: toNumberOrNull(decisionWins),
+                height: toNumberOrNull(height),
+                reach: toNumberOrNull(reach),
                 stance,
-                age, 
-                careerWins,
-                careerLosses,
-                careerDraws,
-                careerNoContests,
-                strikesPerMin: strikesPerMin === "" ? null : strikesPerMin,
-                strikingAccuracy: strikingAccuracy === "" ? null : strikingAccuracy,
-                strikesAbsorbedPerMin: strikesAbsorbedPerMin === "" ? null : strikesAbsorbedPerMin,
-                strikingDefence: strikingDefence === "" ? null : strikingDefence,
-                takedownsPer15Min: takedownsPer15Min === "" ? null : takedownsPer15Min,
-                takedownAccuracy: takedownAccuracy === "" ? null : takedownAccuracy,
-                takedownDefence: takedownDefence === "" ? null : takedownDefence,
-                submissionsPer15Min: submissionsPer15Min === "" ? null : submissionsPer15Min
+                age: toNumberOrNull(age),
+                careerWins: toNumberOrNull(careerWins),
+                careerLosses: toNumberOrNull(careerLosses),
+                careerDraws: toNumberOrNull(careerDraws),
+                careerNoContests: toNumberOrNull(careerNoContests),
+                strikesPerMin: toNumberOrNull(strikesPerMin),
+                strikingAccuracy: toNumberOrNull(strikingAccuracy),
+                strikesAbsorbedPerMin: toNumberOrNull(strikesAbsorbedPerMin),
+                strikingDefence: toNumberOrNull(strikingDefence),
+                takedownsPer15Min: toNumberOrNull(takedownsPer15Min),
+                takedownAccuracy: toNumberOrNull(takedownAccuracy),
+                takedownDefence: toNumberOrNull(takedownDefence),
+                submissionsPer15Min: toNumberOrNull(submissionsPer15Min)
             }),
         })
         .then((response) => {
@@ -136,7 +164,7 @@ function FighterFormPage({ fighterId}) {
         })
         .then((data) => {
             console.log(data);
-            navigate("/");
+            navigate(`/fighter/${fighterId}`);
         });
     }
 
@@ -154,6 +182,8 @@ function FighterFormPage({ fighterId}) {
                 setFirstName={setFirstName}
                 lastName={lastName}
                 setLastName={setLastName}
+                divisionRank={divisionRank}
+                setDivisionRank={setDivisionRank}
                 weightClass={weightClass}
                 setWeightClass={setWeightClass}
                 weightClasses={weightClasses}

@@ -266,6 +266,14 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
                 >
                     Prelims
                 </button>
+                {upcomingEvent?.bouts?.some(bout => bout.cardSection === "Early Prelims") && (
+                    <button
+                        onClick={() => setSelectedCard("Early Prelims")}
+                        className={selectedCard === "Early Prelims" ? "active" : ""}
+                    >
+                        Early Prelims
+                    </button>
+                )}
             </div>
             <div className="upcoming-event">
                 <h2>{upcomingEvent?.name}</h2>

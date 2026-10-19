@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import FighterProfile from './pages/FighterProfile';
 import HomePage from './pages/HomePage';
-import EditFighterPage from './pages/EditFighterPage';
+import FighterFormPage from "./pages/FighterFormPage";
 import BoutProfile from "./pages/BoutProfile";
 import FighterLibrary from "./pages/FighterLibrary";
 import EventsPage from "./pages/EventsPage";
@@ -77,7 +77,7 @@ function App() {
         } 
       />
       <Route path="/fighter/:id" element={<FighterProfile />} />
-      <Route path="/fighters/:id/edit" element={<EditFighterPage />} />
+      <Route path="/fighters/:id/edit" element={<FighterFormPage />} />
       <Route path="/bouts/:id" element={<BoutProfile />} />
       <Route 
         path="/fighters" 

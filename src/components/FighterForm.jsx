@@ -1,6 +1,9 @@
+import { useNavigate } from "react-router-dom";
+
 function FighterForm({
     firstName, setFirstName,
     lastName, setLastName,
+    divisionRank, setDivisionRank,
     weightClass, setWeightClass, weightClasses,
     country, setCountry,
     height, setHeight,
@@ -24,233 +27,241 @@ function FighterForm({
     submissionsPer15Min, setSubmissionsPer15Min,
     saveFighter, mode
 }) {
+
+    const navigate = useNavigate();
+
     return (
-        <div className="fighter-form">
-            <div className="fighter-form-content">
-                <p>* indicates must be filled</p>
-                <div className="fighter-basic-info">
-                    <h4>Basic *</h4>
-                    <div className="form-row">
-                        <label htmlFor="firstName">First Name:</label>
-                        <input
-                            id="firstName"
+        <div className="fighter-profile">
+            <button
+                className="back-button"
+                onClick={() => navigate(-1)}
+            >
+                ← Back
+            </button>
+
+            <div className="fighter-header">
+                <div>
+                    <h1>
+                        <input 
+                            type="text"
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
+                            placeholder="First Name" 
                         />
-                    </div>
-                    <div className="form-row">
-                        <label htmlFor="lastName">Last Name:</label>
-                        <input
-                            id="lastName"
+                        <input 
+                            type="text" 
                             value={lastName}
                             onChange={(e) => setLastName(e.target.value)}
+                            placeholder="Last Name"
                         />
-                    </div>
-                    <div className="form-row">
-                        <label htmlFor="country">Country:</label>
+                    </h1>
+                    <h2>
                         <input 
-                            id="country"
-                            value={country || ""}
-                            onChange={(e) => setCountry(e.target.value)} 
+                            type="text"
+                            value={divisionRank}
+                            onChange={(e) => setDivisionRank(e.target.value)}
+                            placeholder="Rank (C, 1-15, NR)"
                         />
-                    </div>
-                    <select
-                        value={weightClass}
-                        onChange={(e) => setWeightClass(e.target.value)}
-                    >
-                        <option value="">Select weight class</option>
-                        {weightClasses.map((weightClass) => (
-                            <option key={weightClass} value={weightClass}>
-                                {weightClass}
-                            </option>
-                        ))}
-                    </select> 
+                    </h2>
+                    <h2>
+                        <select
+                            value={weightClass}
+                            onChange={(e) => setWeightClass(e.target.value)} 
+                        >
+                            {weightClasses.map((weightClass) => (
+                                <option key={weightClass} value={weightClass}>
+                                    {weightClass}
+                                </option>
+                            ))}
+                        </select>    
+                    </h2>
                 </div>
-
-                <div className="fighter-general-info">
-                    <h4>General *</h4>
-                    <div className="form-row">
-                        <label htmlFor="height">Height (in):</label>
-                        <input
-                            type="number"
+                <h2>
+                    <input 
+                        type="number"
+                        value={careerWins}
+                        onChange={(e) => setCareerWins(e.target.value)}
+                        placeholder="Wins" 
+                    />
+                    <input 
+                        type="number" 
+                        value={careerLosses}
+                        onChange={(e) => setCareerLosses(e.target.value)}
+                        placeholder="Losses"
+                    />
+                    <input 
+                        type="number" 
+                        value={careerDraws}
+                        onChange={(e) => setCareerDraws(e.target.value)}
+                        placeholder="Draws"
+                    />
+                </h2>
+            </div>
+            <div className="fighter-content-wrap">
+                <div className="fighter-summary">
+                    <h2>Profile</h2>
+                    <p>
+                        Country:
+                        <input 
+                            type="text" 
+                            value={country}
+                            onChange={(e) => setCountry(e.target.value)}
+                            placeholder="Country"
+                        />
+                    </p>
+                    <p>
+                        Height: 
+                        <input 
+                            type="text" 
                             value={height}
-                            onChange={(e) => setHeight(Number(e.target.value))}
+                            onChange={(e) => setHeight(e.target.value)}
+                            placeholder="Height"
                         />
-                    </div>
-                    <div className="form-row">
-                        <label htmlFor="reach">Reach (in):</label>
-                        <input
-                            type="number"
+                    </p>    
+                    <p>
+                        Reach: 
+                        <input 
+                            type="text" 
                             value={reach}
-                            onChange={(e) => setReach(Number(e.target.value))}
+                            onChange={(e) => setReach(e.target.value)}
+                            placeholder="Reach"
                         />
-                    </div>
-                    <div className="form-row">
-                        <label htmlFor="age">Age:</label>
-                        <input
-                            type="number"
+                    </p>
+                    <p>
+                        Stance: 
+                        <select
+                                value={stance}
+                                onChange={(e) => setStance(e.target.value)} 
+                            >
+                                {["Orthodox", "Southpaw", "Switch"].map((option) => (
+                                    <option key={option} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                        </select>  
+                    </p>
+                    <p>
+                        Age:
+                        <input 
+                            type="text"
                             value={age}
-                            onChange={(e) => setAge(Number(e.target.value))}
+                            onChange={(e) => setAge(e.target.value)}
+                            placeholder="Age"
                         />
-                    </div>
-                    <select
-                        value={stance}
-                        onChange={(e) => setStance(e.target.value)}
-                    >
-                        <option value="">Select stance</option>
-                        <option value="Orthodox">Orthodox</option>
-                        <option value="Southpaw">Southpaw</option>
-                        <option value="Switch">Switch</option>
-                    </select>
+                    </p>
                 </div>
-
-                <div className="fighter-career-info">
-                    <h4>Career *</h4>
-                    <div className="form-row">
-                        <label htmlFor="careerWins">Career Wins:</label>
-                        <input
-                            type="number"
-                            value={careerWins}
-                            onChange={(e) => setCareerWins(Number(e.target.value))}
-                        />  
-                    </div>
-                    <div className="form-row">
-                        <label htmlFor="careerLosses">Career Losses:</label>
-                        <input
-                            type="number"
-                            value={careerLosses}
-                            onChange={(e) => setCareerLosses(Number(e.target.value))}
-                        />
-                    </div>
-                    <div className="form-row"> 
-                        <label htmlFor="careerDraws">Career Draws:</label>
-                        <input
-                            type="number"
-                            value={careerDraws}
-                            onChange={(e) => setCareerDraws(Number(e.target.value))}
-                        />      
-                    </div>
-                    <div className="form-row">
-                        <label htmlFor="careerNoContests">Career NCs:</label>
-                        <input
-                            type="number"
-                            value={careerNoContests}
-                            onChange={(e) => setCareerNoContests(Number(e.target.value))}
-                        />  
-                    </div>
-                </div>
-
-                <div className="fighter-finishes-info">
-                    <h4>Finishes *</h4>
-                    <div className="form-row">
-                        <label htmlFor="submissions">Submissions:</label>
+                <div className="fighter-stats">
+                    <h2>Advanced stats</h2>
+                    <p>
+                        Strikes per min:
                         <input 
-                            type="number"
-                            value={submissionWins}
-                            onChange={(e) => setSubmissionWins(Number(e.target.value))}
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label htmlFor="knockouts">Knockouts:</label>
-                        <input 
-                            type="number"
-                            value={knockoutWins}
-                            onChange={(e) => setKnockoutWins(Number(e.target.value))}
-                        />
-                    </div>
-                    <div className="form-row">
-                        <label htmlFor="decisions">Decisions:</label>
-                        <input 
-                            type="number"
-                            value={decisionWins}
-                            onChange={(e) => setDecisionWins(Number(e.target.value))}
-                        />
-                    </div>
-                </div>
-
-                <div className="fighter-advanced-info">
-                    <h4>Advanced</h4>
-                    <div className="form-row">
-                        <label htmlFor="strikesPerMin">Strikes p/m:</label>
-                        <input 
-                            type="number"
+                            type="text"
+                            inputMode="decimal"
                             value={strikesPerMin}
-                            onChange={(e) => setStrikesPerMin(Number(e.target.value))}
-                            placeholder="Strikes per minute"
+                            onChange={(e) => setStrikesPerMin(e.target.value)} 
                         />
-                    </div>
-                    <div className="form-row">
-                        <label htmlFor="strikingAccuracy">Striking accuracy:</label>
+                    </p>
+                    <p>
+                        Sriking accuracy:
                         <input 
-                            type="number"
+                            type="text"
+                            inputMode="decimal"
                             value={strikingAccuracy}
-                            onChange={(e) => setStrikingAccuracy(Number(e.target.value))}
-                            placeholder="%"
+                            onChange={(e) => setStrikingAccuracy(e.target.value)} 
                         />
-                    </div>
-                    <div className="form-row">
-                        <label htmlFor="strikesAbsorbedPerMin">Strikes absorbed p/m:</label>
+                    </p>
+                    <p>
+                        Strikes absorbed per min:  
                         <input 
-                            type="number"
+                            type="text"
+                            inputMode="decimal"
                             value={strikesAbsorbedPerMin}
-                            onChange={(e) => setStrikesAbsorbedPerMin(Number(e.target.value))}
-                            placeholder="Strikes absorbed per minute"
+                            onChange={(e) => setStrikesAbsorbedPerMin(e.target.value)} 
                         />
-                    </div>
-                    <div className="form-row">
-                        <label htmlFor="strikingDefence">Striking defence:</label>
+                    </p>
+                    <p>
+                        Striking defence:  
                         <input 
-                            type="number"
+                            type="text"
+                            inputMode="decimal"
                             value={strikingDefence}
-                            onChange={(e) => setStrikingDefence(Number(e.target.value))}
-                            placeholder="%"
+                            onChange={(e) => setStrikingDefence(e.target.value)} 
                         />
-                    </div>
-                    <div className="form-row">  
-                        <label htmlFor="takedownsPer15Min">Takedowns per 15 min:</label>
+                    </p>
+                    <p>
+                        Takedowns per 15 min: 
                         <input 
-                            type="number"
+                            type="text" 
+                            inputMode="decimal"
                             value={takedownsPer15Min}
-                            onChange={(e) => setTakedownsPer15Min(Number(e.target.value))}
-                            placeholder="Takedowns per 15 minutes"
+                            onChange={(e) => setTakedownsPer15Min(e.target.value)}
                         />
-                    </div>
-                    <div className="form-row">
-                        <label htmlFor="takedownAccuracy">Takedown accuracy:</label>
+                    </p>
+                    <p>
+                        Takedown accuracy:
                         <input 
-                            type="number"
+                            type="text" 
+                            inputMode="decimal"
                             value={takedownAccuracy}
-                            onChange={(e) => setTakedownAccuracy(Number(e.target.value))}
-                            placeholder="%"
+                            onChange={(e) => setTakedownAccuracy(e.target.value)}
                         />
-                    </div>
-                    <div className="form-row">
-                        <label htmlFor="takedownDefence">Takedown defence:</label>
+                    </p>
+                    <p>
+                        Takedown defence:
                         <input 
-                            type="number"
+                            type="text" 
+                            inputMode="decimal"
                             value={takedownDefence}
-                            onChange={(e) => setTakedownDefence(Number(e.target.value))}
-                            placeholder="%"
+                            onChange={(e) => setTakedownDefence(e.target.value)}
                         />
-                    </div>
-                    <div className="form-row">
-                        <label htmlFor="submissionsPer15Min">Submissions per 15 min:</label>
+                    </p>
+                    <p>
+                        Submissions per 15 min:
                         <input 
-                            type="number"
+                            type="text" 
+                            inputMode="decimal"
                             value={submissionsPer15Min}
-                            onChange={(e) => setSubmissionsPer15Min(Number(e.target.value))}
-                            placeholder="Submissions per 15 minutes"
+                            onChange={(e) => setSubmissionsPer15Min(e.target.value)}
                         />
-                    </div>
-                </div>
+                    </p>
 
-                <div className="add-fighter-button">
-                    <button onClick={saveFighter}>
-                        Save Changes
-                    </button>
+                </div>
+                <div className="fighter-notes">
+                    <h2>Wins by Method</h2>
+                    <p>
+                        KO/TKO:
+                        <input 
+                            type="text" 
+                            inputMode="numeric"
+                            value={knockoutWins ?? ""}
+                            onChange={(e) => setKnockoutWins(e.target.value)}
+                        />
+                    </p>
+                    <p>
+                        Submissions:
+                        <input 
+                            type="text" 
+                            inputMode="numeric"
+                            value={submissionWins ?? ""}
+                            onChange={(e) => setSubmissionWins(e.target.value)}
+                        />
+                    </p>
+                    <p>
+                        Decisions:
+                        <input 
+                            type="text" 
+                            inputMode="numeric"
+                            value={decisionWins}
+                            onChange={(e) => setDecisionWins(e.target.value)}
+                        />
+                    </p>
                 </div>
             </div>
+            <button onClick={saveFighter}>
+                Save Changes
+            </button>
         </div>
+        
         );
 }
 

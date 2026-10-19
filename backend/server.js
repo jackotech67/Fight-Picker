@@ -551,6 +551,8 @@ app.put("/fighters/:id", verifyAdmin, async (req, res) => {
         const {
             firstName,
             lastName,
+            divisionRank,
+            championStatus,
             weightClass,
             country,
             submissionWins,
@@ -606,7 +608,9 @@ app.put("/fighters/:id", verifyAdmin, async (req, res) => {
                 takedown_accuracy = $20,
                 takedown_defence = $21,
                 submissions_per_15_min = $22,
-                country = $24
+                country = $24,
+                division_rank = $25,
+                champion_status = $26
             WHERE id = $23
             RETURNING
                 id, 
@@ -632,7 +636,9 @@ app.put("/fighters/:id", verifyAdmin, async (req, res) => {
                 takedown_accuracy AS "takedownAccuracy",
                 takedown_defence AS "takedownDefence",
                 submissions_per_15_min AS "submissionsPer15Min",
-                country
+                country,
+                division_rank AS "divisionRank",
+                champion_status AS "championStatus"
             `,
             [
                 firstName, 
@@ -658,7 +664,9 @@ app.put("/fighters/:id", verifyAdmin, async (req, res) => {
                 takedownDefence,
                 submissionsPer15Min,
                 id,
-                country
+                country,
+                divisionRank,
+                championStatus
             ]
         );
 
