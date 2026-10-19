@@ -32,13 +32,6 @@ function FighterForm({
 
     return (
         <div className="fighter-profile">
-            <button
-                className="back-button"
-                onClick={() => navigate(-1)}
-            >
-                ← Back
-            </button>
-
             <div className="fighter-header">
                 <div>
                     <h1>
@@ -102,7 +95,8 @@ function FighterForm({
                     <h2>Profile</h2>
                     <p>
                         Country:
-                        <input 
+                        <input
+                            className="country" 
                             type="text" 
                             value={country}
                             onChange={(e) => setCountry(e.target.value)}
@@ -130,6 +124,7 @@ function FighterForm({
                     <p>
                         Stance: 
                         <select
+                                className="stance"
                                 value={stance}
                                 onChange={(e) => setStance(e.target.value)} 
                             >
@@ -257,7 +252,10 @@ function FighterForm({
                     </p>
                 </div>
             </div>
-            <button onClick={saveFighter}>
+            <button
+                className="save-changes" 
+                onClick={saveFighter}
+            >
                 Save Changes
             </button>
         </div>

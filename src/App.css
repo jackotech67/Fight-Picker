@@ -17,28 +17,13 @@
 .navbar input {
   height: 2rem;
 }
-.admin-import-controls {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  height: 1.5rem;
-}
 
+/* check what this is */
 .title {
   text-align: center;
 }
 
-.add-fighter-wrapper {
-  text-align: center;
-  margin: 1rem;
-  padding: 1rem;
-}
-.fighter-form input {
-  margin: 0.125rem;
-}
-.fighter-form button {
-  margin: 0.125rem;
-}
+/* fighter card */
 
 .fighter-card {
   border: 1px solid black;
@@ -67,13 +52,8 @@
 .fighter-card button {
   margin: 0.125rem;
 }
-.fighter-card.fighter-1 {
-  border: 3px solid blue;
-}
-.fighter-card.fighter-2 {
-  border: 3px solid red;
-}
 
+/* home page comparison */
 .comparison-wrapper {
   border: 1.5px solid black;
   margin: 1rem;
@@ -85,6 +65,7 @@
   margin: 0.125rem;
 }
 
+/* check this */
 .fighter-search {
   margin-left: 1rem;
   padding: 0.4rem;
@@ -101,7 +82,6 @@
 }
 
 /* comparison table */
-
 .comparison-table {
   display: flex;
   justify-content: center;
@@ -236,6 +216,45 @@
     text-align: center;
 }
 
+/* edit fighter page */
+
+.fighter-header input, .fighter-header select, 
+.fighter-content-wrap input, .fighter-content-wrap select {
+  padding: 0.25rem;
+  margin-left: 5px;
+}
+.fighter-header h1 input {
+  width: 120px;
+}
+.fighter-header h2 input {
+  width: 50px;
+}
+.fighter-summary input.country, .fighter-summary select.stance {
+  width: 100px;
+}
+.fighter-summary input, .fighter-stats input, .fighter-notes input {
+  width: 60px;
+}
+.fighter-profile button.save-changes {
+  margin-top: 10px;
+}
+.add-fighter-wrapper {
+  text-align: center;
+  margin: 1rem;
+  padding: 1rem;
+}
+.edit-fighter-wrapper {
+  margin: 1rem;
+  padding: 1rem;
+}
+.fighter-profile button.save-changes {
+    display: block;
+    margin: 20px auto 0;
+    padding: 0.5rem;
+}
+
+
+
 /* fighter profile page */
 
 .fighter-profile {
@@ -288,77 +307,6 @@
 .fight-history-table th:nth-child(2),
 .fight-history-table td:nth-child(2) {
   text-align: left;
-}
-
-/* add fighter form */
-.fighter-form {
-  width: 600px;
-  margin: 0 auto;
-  border: 2px solid black;
-  background-color: lightgrey;
-}
-.form-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 0.75rem;
-}
-.fighter-basic-info input, 
-.fighter-general-info input,
-.fighter-career-info input,
-.fighter-finishes-info input {
-  width: 150px;
-}
-.fighter-advanced-info input {
-  width: 200px;
-}
-.fighter-basic-info,
-.fighter-general-info,
-.fighter-career-info,
-.fighter-finishes-info {
-  width: 70%;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-}
-.fighter-advanced-info {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-.fighter-basic-info h4,
-.fighter-general-info h4, 
-.fighter-career-info h4,
-.fighter-finishes-info h4,
-.fighter-advanced-info h4 {
-  align-self: flex-start;
-  font-size: 1.2rem;
-}
-.fighter-form-content {
-  display: flex;
-  flex-direction: column;
-  width: 500px;
-  margin: 0 auto;
-  border: 2px solid black;
-  background-color: white;
-  padding: 2rem;
-}
-.add-fighter-button button {
-  margin-top: 2rem;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-}
-.fighter-form select {
-  padding: 0.2rem 0.4rem;
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-.fighter-form p {
-  margin-top: 0;
-  margin-bottom: 0;
-  font-style: italic;
 }
 
 /* events page */

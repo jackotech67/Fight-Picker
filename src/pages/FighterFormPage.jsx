@@ -175,8 +175,14 @@ function FighterFormPage() {
     }
 
     return (
-        <div className="add-fighter-wrapper">
-            <h1>Edit Fighter</h1>
+        <div className="edit-fighter-wrapper">
+            <button
+                className="back-button"
+                onClick={() => navigate(-1)}
+            >
+                ← Back
+            </button>
+            <h1 className="title">Edit Fighter</h1>
             <FighterForm
                 firstName={firstName}
                 setFirstName={setFirstName}
