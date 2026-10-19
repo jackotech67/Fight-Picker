@@ -175,6 +175,9 @@ app.get("/events/upcoming", async (req, res) => {
 //  get list of past events for Events Page
 app.get("/events", async (req, res) => {
     try {
+        const limit = 6;
+        const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+        const offset = (page - 1) * limit;
         const result = await pool.query(`
             SELECT
                 events.id,
@@ -199,8 +202,9 @@ app.get("/events", async (req, res) => {
                 ON fighters.id = bout_performance.fighter_id
             WHERE events.event_date < CURRENT_DATE
             GROUP BY events.id
-            ORDER BY events.event_date DESC
-        `);
+            ORDER BY events.event_date DESC, events.id DESC
+            LIMIT $1 OFFSET $2
+        `, [limit, offset]);
 
         res.json(result.rows);
     } catch (error) {

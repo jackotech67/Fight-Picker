@@ -440,4 +440,11 @@ async function importCitoData(eventSlug) {
 
 const eventSlug = process.argv[2];
 
-importCitoData(eventSlug);
+importCitoData(eventSlug)
+    .catch((error) => {
+        console.error("Import failed:", error);
+        process.exitCode = 1;
+    })
+    .finally(async () => {
+        await pool.end();
+    });

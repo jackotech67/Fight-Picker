@@ -29,12 +29,39 @@ function EventsPage() {
 
     const navigate = useNavigate();
     const [events, setEvents] = useState([]);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        fetch(`${API_URL}/events`)
-        .then ((response) => response.json())
-        .then((data) => setEvents(data));
-    }, []);
+        const controller = new AbortController();
+
+        setLoading(true);
+
+        fetch(`${API_URL}/events?page=${page}`, {
+            signal: controller.signal
+        })
+            .then((response) => {
+                if (!response.ok) throw new Error("Failed to fetch events");
+                return response.json();
+            })
+            .then((data) => {
+                setEvents((previous) => [...previous, ...data]);
+                setHasMore(data.length === 6);
+            })
+            .catch((error) => {
+                if (error.name !== "AbortError") {
+                    console.error(error);
+                }
+            })
+            .finally(() => {
+                if (!controller.signal.aborted) {
+                    setLoading(false);
+                }
+            });
+        
+        return () => controller.abort();
+    }, [page]);
 
     return (
         <>
@@ -68,6 +95,15 @@ function EventsPage() {
                         </span>
                     </Link>
                 ))}
+                {hasMore && (
+                    <button
+                        className="load-more-button"
+                        onClick={() => setPage((previous) => previous + 1)}
+                        disabled={loading}
+                    >
+                        {loading ? "Loading..." : "Load More"}
+                    </button>
+                )}
             </main>
         </>
     );
