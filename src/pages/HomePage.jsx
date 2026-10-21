@@ -342,7 +342,11 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
                                             />
                                             <div className='matchup-fighter-stats matchup-fighter-stats-left'>
                                                 <Link to={`/fighter/${bout.fighters[0]?.id}`}>
-                                                    {bout.fighters[0]?.divisionRank != null && `#${bout.fighters[0].divisionRank} `}
+                                                    {bout.fighters[0]?.championStatus === "champion"
+                                                        ? "👑 "
+                                                        : bout.fighters[0]?.divisionRank != null
+                                                            ? `#${bout.fighters[0].divisionRank} `
+                                                            : ""}
                                                     {bout.fighters[0]?.firstName} {bout.fighters[0]?.lastName}
                                                 </Link>
                                                 <div className="fighter-record">
@@ -357,6 +361,7 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
                                                 )}
                                                 {editingBout && (
                                                     <input
+                                                        className="fighter-odds-input"
                                                         type="text"
                                                         inputMode="decimal"
                                                         placeholder="Odds"
@@ -394,7 +399,11 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
                                             />
                                             <div className='matchup-fighter-stats matchup-fighter-stats-left'>
                                                 <Link to={`/fighter/${bout.fighters[1]?.id}`}>
-                                                    {bout.fighters[1]?.divisionRank != null && `#${bout.fighters[1].divisionRank} `}
+                                                    {bout.fighters[1]?.championStatus === "champion"
+                                                        ? "👑 "
+                                                        : bout.fighters[1]?.divisionRank != null
+                                                            ? `#${bout.fighters[1].divisionRank} `
+                                                            : ""}
                                                     {bout.fighters[1]?.firstName} {bout.fighters[1]?.lastName}
                                                 </Link>
                                                 <div className="fighter-record">
@@ -409,6 +418,7 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
                                                 )}
                                                 {editingBout && (
                                                     <input
+                                                        className="fighter-odds-input"
                                                         type="text"
                                                         inputMode="decimal"
                                                         placeholder="Odds"
