@@ -444,6 +444,88 @@ app.get("/fighters/:id/history", async (req, res) => {
     }
 });
 
+// get odds for a bout
+app.get("/bouts/:id/odds", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const result = await pool.query(
+            `
+                SELECT 
+                    fighter_id AS "fighterId",
+                    bookmaker,
+                    decimal_odds AS "decimalOdds",
+                    updated_at AS "updatedAt"
+                FROM bout_odds
+                WHERE bout_id = $1
+                ORDER BY bookmaker, fighter_id
+            `, [id]);
+
+            res.json(result.rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Failed to fetch odds"
+        });
+    }
+});
+
+// add or update odds for a bout (admin only)
+app.put("/bouts/:id/odds", verifyAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { fighterId, bookmaker, decimalOdds } = req.body;
+
+        const odds = Number(decimalOdds);
+
+        if (
+            !Number.isInteger(Number(id)) ||
+            !Number.isInteger(fighterId) ||
+            typeof bookmaker !== "string" ||
+            !bookmaker.trim() ||
+            !Number.isFinite(odds) ||
+            odds <= 1 ||
+            odds > 99999.99
+        ) {
+            return res.status(400).json({
+                message: "Invalid odds information"
+            });
+        }
+
+        const result = await pool.query(
+            `
+            INSERT INTO bout_odds (
+                bout_id, fighter_id, bookmaker, decimal_odds
+            )
+            SELECT $1, $2, $3, $4
+            WHERE EXISTS (
+                SELECT 1
+                FROM bout_performance
+                WHERE bout_id = $1 AND fighter_id = $2
+            )
+            ON CONFLICT (bout_id, fighter_id, bookmaker)
+            DO UPDATE SET
+                decimal_odds = EXCLUDED.decimal_odds,
+                updated_at = NOW()
+            RETURNING *
+        `, [id, fighterId, bookmaker.trim(), odds]);
+        
+
+        if (result.rows.length === 0) {
+            return res.status(400).json({
+                message: "Fighter does not belong to this bout"
+            });
+        }
+
+        res.json(result.rows[0]);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Failed to save odds"
+        });
+    }
+});
+
 // get individual fighter's UFC fight history
 app.get("/bouts/:id", async (req, res) => {
     try {

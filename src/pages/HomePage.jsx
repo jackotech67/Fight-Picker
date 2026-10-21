@@ -1,8 +1,9 @@
 import '../App.css'
 import Navbar from '../components/Navbar';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Fragment } from 'react';
 import { Link } from "react-router-dom";
 import { formatHeight, formatRate, formatPercentage } from '../utils/formatStats';
+import OddsForm from '../components/OddsForm';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -11,6 +12,8 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
     const comparisonRef = useRef(null);
     const [upcomingEvent, setUpcomingEvent] = useState(null);
     const [selectedCard, setSelectedCard] = useState("Main Card");
+    const [editingBout, setEditingBout] = useState(null);
+    const [boutOdds, setBoutOdds] = useState({});
 
     const displayedBouts = upcomingEvent?.bouts?.filter(
         (bout) => bout.cardSection === selectedCard
@@ -22,11 +25,45 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
             .then((data) => setUpcomingEvent(data));
     }, []);
 
+    useEffect(() => {
+        if (!upcomingEvent?.bouts) return;
+
+        async function loadOdds() {
+            try {
+                const results = await Promise.all(
+                    upcomingEvent.bouts.map(async (bout) => {
+                        const response = await fetch(`${API_URL}/bouts/${bout.id}/odds`);
+
+                        if (!response.ok) throw new Error("Failed to fetch odds");
+
+                        return {
+                            boutId: bout.id,
+                            data: await response.json()
+                        };
+                    })
+                );
+
+                const existingOdds = {};
+
+                results.forEach(({ boutId, data }) => {
+                    data.filter((entry) => entry.bookmaker === "TAB NZ")
+                        .forEach((entry) => {
+                            existingOdds[`${boutId}-${entry.fighterId}`] = entry.decimalOdds;
+                        });
+                });
+
+                setBoutOdds(existingOdds);
+            } catch (error) {
+                console.error("Failed to load odds:", error);
+            }
+        }
+
+        loadOdds();
+    }, [upcomingEvent]);
+
     const [fighter1, setFighter1] = useState(null);
     const [fighter2, setFighter2] = useState(null);
     const [showComparison, setShowComparison] = useState(false);
-
-    const [adminMessage, setAdminMessage] = useState("");
 
     const [highlightStats, setHighlightStats] = useState(false);
 
@@ -277,10 +314,15 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
             </div>
             <div className="upcoming-event">
                 <h2>{upcomingEvent?.name}</h2>
+                    {isAdmin && !editingBout && (
+                        <button onClick={() => setEditingBout(upcomingEvent)}>
+                            Edit Odds
+                        </button>
+                    )}
                 <table className="event-matchups">
                     <tbody>
                         {displayedBouts.map((bout) => (
-                            <>
+                            <Fragment key={bout.id}>
                                 <tr className="bout-weight-class" key={`${bout.id}-weight`}>
                                     <th colSpan="3">
                                         {bout.fighters[0]?.weightClass || bout.fighters[1]?.weightClass}
@@ -308,6 +350,25 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
                                                     {bout.fighters[0]?.careerLosses}-
                                                     {bout.fighters[0]?.careerDraws}
                                                 </div>
+                                                {!editingBout && boutOdds[`${bout.id}-${bout.fighters[0]?.id}`] && (
+                                                    <div className="fighter-odds">
+                                                        {Number(boutOdds[`${bout.id}-${bout.fighters[0]?.id}`]).toFixed(2)}
+                                                    </div>
+                                                )}
+                                                {editingBout && (
+                                                    <input
+                                                        type="text"
+                                                        inputMode="decimal"
+                                                        placeholder="Odds"
+                                                        value={boutOdds[`${bout.id}-${bout.fighters[0]?.id}`] ?? ""}
+                                                        onChange={(e) => {
+                                                            setBoutOdds((previous) => ({
+                                                                ...previous,
+                                                                [`${bout.id}-${bout.fighters[0]?.id}`]: e.target.value
+                                                            }));
+                                                        }}
+                                                    />
+                                                )}
                                             </div>
                                         </div>
                                        
@@ -341,16 +402,40 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
                                                     {bout.fighters[1]?.careerLosses}-
                                                     {bout.fighters[1]?.careerDraws}
                                                 </div>
+                                                {!editingBout && boutOdds[`${bout.id}-${bout.fighters[1]?.id}`] && (
+                                                    <div className="fighter-odds">
+                                                        {Number(boutOdds[`${bout.id}-${bout.fighters[1]?.id}`]).toFixed(2)}
+                                                    </div>
+                                                )}
+                                                {editingBout && (
+                                                    <input
+                                                        type="text"
+                                                        inputMode="decimal"
+                                                        placeholder="Odds"
+                                                        value={boutOdds[`${bout.id}-${bout.fighters[1]?.id}`] ?? ""}
+                                                        onChange={(e) => {
+                                                            setBoutOdds((previous) => ({
+                                                                ...previous,
+                                                                [`${bout.id}-${bout.fighters[1]?.id}`]: e.target.value
+                                                            }));
+                                                        }}
+                                                    />
+                                                )}
                                             </div>
                                         </div>
-                                        
-                                        
                                     </td>
                                 </tr>
-                            </>
+                            </Fragment>
                         ))}
                     </tbody>
                 </table>
+                {editingBout && (
+                    <OddsForm
+                        event={editingBout}
+                        odds={boutOdds}
+                        onClose={() => setEditingBout(null)}
+                    />
+                )}
             </div>
         </div> 
     );
