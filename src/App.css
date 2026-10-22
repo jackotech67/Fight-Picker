@@ -173,7 +173,6 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-
 }
 .matchup-fighter-stats-right {
   justify-content: flex-start;

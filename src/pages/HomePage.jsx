@@ -2,7 +2,7 @@ import '../App.css'
 import Navbar from '../components/Navbar';
 import { useState, useEffect, useRef, Fragment } from 'react';
 import { Link } from "react-router-dom";
-import { formatHeight, formatRate, formatPercentage } from '../utils/formatStats';
+import { formatHeight, formatRate, formatPercentage, formatFightTime } from '../utils/formatStats';
 import OddsForm from '../components/OddsForm';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -251,6 +251,24 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
                                     <td>Submissions per 15 min</td>
                                     <td className={getWinner(fighter2.submissionsPer15Min, fighter1.submissionsPer15Min)}>
                                         {formatRate(fighter2.submissionsPer15Min)}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className={getWinner(fighter1.knockdownAvg, fighter2.knockdownAvg)}>
+                                        {formatRate(fighter1.knockdownAvg)}
+                                    </td>
+                                    <td>Knockdowns per 15 min</td>
+                                    <td className={getWinner(fighter2.knockdownAvg, fighter1.knockdownAvg)}>
+                                        {formatRate(fighter2.knockdownAvg)}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className={getLoser(fighter1.averageFightTimeSeconds, fighter2.averageFightTimeSeconds)}>
+                                        {formatFightTime(fighter1.averageFightTimeSeconds)}
+                                    </td>
+                                    <td>Average fight time</td>
+                                    <td className={getLoser(fighter2.averageFightTimeSeconds, fighter1.averageFightTimeSeconds)}>
+                                        {formatFightTime(fighter2.averageFightTimeSeconds)}
                                     </td>
                                 </tr>
                                 {/* Career */}

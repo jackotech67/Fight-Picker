@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getCountryFlag } from "../utils/countryFlags";
-import { formatHeight, formatRate, formatPercentage } from "../utils/formatStats";
+import { formatHeight, formatRate, formatPercentage, formatFightTime } from "../utils/formatStats";
 import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -70,6 +70,8 @@ function FighterProfile() {
                     <p>Takedown accuracy: {formatPercentage(fighter.takedownAccuracy)}</p>
                     <p>Takedown defence: {formatPercentage(fighter.takedownDefence)}</p>
                     <p>Submissions per 15 min: {formatRate(fighter.submissionsPer15Min)}</p>
+                    <p>Knockdowns per 15 min: {formatRate(fighter.knockdownAvg)}</p>
+                    <p>Average fight time: {formatFightTime(fighter.averageFightTimeSeconds)}</p>
                 </div>
                 <div className="fighter-notes">
                     <h2>Wins by Method</h2>

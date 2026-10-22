@@ -65,6 +65,14 @@ async function importCitoData(eventSlug) {
     const boutResult = await boutResponse.json();
     const bouts = boutResult.data;
 
+    console.log(
+        "Bouts returned by Cito:",
+        bouts.map(bout => ({
+            id: bout.id,
+            fighters: bout.fighters?.map(f => f.fighterSlug)
+        }))
+    );
+
     for (const bout of bouts) {
         // INSERT / UPDATE EACH BOUT IN DATABASE
         const insertedBout = await pool.query(
@@ -135,9 +143,9 @@ async function importCitoData(eventSlug) {
                     ranking.division?.includes("Pound-for-Pound")
             )?.rank ?? null;
 
-            const submissionWins = winsByMethod?.sub?.count ?? 0;
-            const knockoutWins = winsByMethod?.["ko-tko"]?.count ?? 0;
-            const decisionWins = winsByMethod?.dec?.count ?? 0;
+            const submissionWins = winsByMethod?.sub?.count ?? null;
+            const knockoutWins = winsByMethod?.["ko-tko"]?.count ?? null;
+            const decisionWins = winsByMethod?.dec?.count ?? null;
 
             // INSERT UPDATE FIGHTER IN DATABASE
             const height = Number(fighterProfile.heightInches);
@@ -178,13 +186,15 @@ async function importCitoData(eventSlug) {
                     is_active,
                     division_rank,
                     p4p_rank,
-                    champion_status
+                    champion_status, 
+                    knockdown_avg,
+                    average_fight_time_seconds
                 )
                 VALUES (
                     $1, $2, $3, $4, $5, $6, $7, $8, 
                     $9, $10, $11, $12, $13, $14, $15, $16,
                     $17, $18, $19, $20, $21, $22, $23, $24,
-                    $25, $26, $27, $28, $29, $30, $31
+                    $25, $26, $27, $28, $29, $30, $31, $32, $33
                     )
                 ON CONFLICT (cito_slug)
                 DO UPDATE SET
@@ -196,17 +206,17 @@ async function importCitoData(eventSlug) {
                     reach = EXCLUDED.reach,
                     stance = EXCLUDED.stance,
                     age = EXCLUDED.age,
-                    strikes_per_min = EXCLUDED.strikes_per_min,
-                    striking_accuracy = EXCLUDED.striking_accuracy,
-                    strikes_absorbed_per_min = EXCLUDED.strikes_absorbed_per_min,
-                    striking_defence = EXCLUDED.striking_defence,
-                    takedowns_per_15_min = EXCLUDED.takedowns_per_15_min,
-                    takedown_accuracy = EXCLUDED.takedown_accuracy,
-                    takedown_defence = EXCLUDED.takedown_defence,
-                    submissions_per_15_min = EXCLUDED.submissions_per_15_min,
-                    submission_wins = EXCLUDED.submission_wins,
-                    knockout_wins = EXCLUDED.knockout_wins,
-                    decision_wins = EXCLUDED.decision_wins,
+                    strikes_per_min = COALESCE(EXCLUDED.strikes_per_min, fighters.strikes_per_min),
+                    striking_accuracy = COALESCE(EXCLUDED.striking_accuracy, fighters.striking_accuracy),
+                    strikes_absorbed_per_min = COALESCE(EXCLUDED.strikes_absorbed_per_min, fighters.strikes_absorbed_per_min),
+                    striking_defence = COALESCE(EXCLUDED.striking_defence, fighters.striking_defence),
+                    takedowns_per_15_min = COALESCE(EXCLUDED.takedowns_per_15_min, fighters.takedowns_per_15_min),
+                    takedown_accuracy = COALESCE(EXCLUDED.takedown_accuracy, fighters.takedown_accuracy),
+                    takedown_defence = COALESCE(EXCLUDED.takedown_defence, fighters.takedown_defence),
+                    submissions_per_15_min = COALESCE(EXCLUDED.submissions_per_15_min, fighters.submissions_per_15_min),
+                    submission_wins = COALESCE(EXCLUDED.submission_wins, fighters.submission_wins),
+                    knockout_wins = COALESCE(EXCLUDED.knockout_wins, fighters.knockout_wins),
+                    decision_wins = COALESCE(EXCLUDED.decision_wins, fighters.decision_wins),
                     career_wins = EXCLUDED.career_wins,
                     career_losses = EXCLUDED.career_losses,
                     career_draws = EXCLUDED.career_draws,
@@ -217,7 +227,9 @@ async function importCitoData(eventSlug) {
                     is_active = COALESCE(EXCLUDED.is_active, fighters.is_active),
                     division_rank = COALESCE(EXCLUDED.division_rank, fighters.division_rank),
                     p4p_rank = COALESCE(EXCLUDED.p4p_rank, fighters.p4p_rank),
-                    champion_status = COALESCE(EXCLUDED.champion_status, fighters.champion_status)
+                    champion_status = COALESCE(EXCLUDED.champion_status, fighters.champion_status),
+                    knockdown_avg = COALESCE(EXCLUDED.knockdown_avg, fighters.knockdown_avg),
+                    average_fight_time_seconds = COALESCE(EXCLUDED.average_fight_time_seconds, fighters.average_fight_time_seconds)
                 RETURNING *
                 `,
                 [
@@ -251,7 +263,9 @@ async function importCitoData(eventSlug) {
                     fighterProfile.isActive ?? null,
                     divisionRank,
                     p4pRank,
-                    fighterProfile.championStatus ?? null
+                    fighterProfile.championStatus ?? null,
+                    stats?.knockdownAvg,
+                    stats?.averageFightTimeSeconds
                 ]
             );
             const fighterId = insertedFighter.rows[0].id;
@@ -328,9 +342,19 @@ async function importCitoData(eventSlug) {
             }
 
             // PREPARE FIGHTER ROUND PERFORMANCE
-            const fighterRoundStats = bout.roundStats.filter(
-                stat => stat.fighterSlug === fighter.fighterSlug
+            const aliasResult = await pool.query(
+                "SELECT cito_slug FROM fighter_aliases WHERE fighter_id = $1", [fighterId]
             );
+            
+            const validSlugs = [fighter.fighterSlug, ...aliasResult.rows.map(row => row.cito_slug)];
+
+            const fighterRoundStats = bout.roundStats.filter(
+                stat => validSlugs.includes(stat.fighterSlug)
+            );
+            
+            if (fighterRoundStats.length === 0) {
+                console.log(`Missing round stats | Bout ID: ${boutId} | Fighter: ${fighter.fighterSlug}`);
+            }
             for (const roundStat of fighterRoundStats) {
                 const significantStrikes = splitStat(roundStat.significantStrikes);
                 const totalStrikes = splitStat(roundStat.totalStrikes);

@@ -144,7 +144,9 @@ app.get("/events/upcoming", async (req, res) => {
                 fighters.takedowns_per_15_min AS "takedownsPer15Min",
                 fighters.takedown_accuracy AS "takedownAccuracy",
                 fighters.takedown_defence AS "takedownDefence",
-                fighters.submissions_per_15_min AS "submissionsPer15Min"
+                fighters.submissions_per_15_min AS "submissionsPer15Min",
+                fighters.knockdown_avg AS "knockdownAvg",
+                fighters.average_fight_time_seconds AS "averageFightTimeSeconds"
             FROM bout_performance
             JOIN fighters
                 ON bout_performance.fighter_id = fighters.id
@@ -370,7 +372,9 @@ app.get("/fighters/:id", async (req, res) => {
                 division_rank AS "divisionRank",
                 p4p_rank AS "p4pRank",
                 champion_status AS "championStatus",
-                is_active AS "isActive"
+                is_active AS "isActive",
+                knockdown_avg AS "knockdownAvg",
+                average_fight_time_seconds AS "averageFightTimeSeconds"
             FROM fighters
             WHERE id = $1
             `,

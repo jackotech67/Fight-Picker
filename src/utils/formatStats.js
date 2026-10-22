@@ -12,3 +12,12 @@ export function formatRate(value) {
 export function formatPercentage(value) {
     return `${(value * 100).toFixed(0)}%`;
 }
+
+export function formatFightTime(seconds) {
+    if (seconds === null) return "N/A";
+
+    const minutes = Math.floor(seconds/60);
+    const remainingSeconds = seconds % 60;
+
+    return `${minutes}:${String(remainingSeconds).padStart(2, "0")}`;
+}
