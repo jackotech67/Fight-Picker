@@ -1,7 +1,7 @@
 import '../App.css'
 import Navbar from '../components/Navbar';
 import { useState, useEffect, useRef, Fragment } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { formatHeight, formatRate, formatPercentage, formatFightTime } from '../utils/formatStats';
 import OddsForm from '../components/OddsForm';
 
@@ -11,7 +11,12 @@ function HomePage({ isAdmin, unlockAdmin, lockAdmin }) {
 
     const comparisonRef = useRef(null);
     const [upcomingEvent, setUpcomingEvent] = useState(null);
-    const [selectedCard, setSelectedCard] = useState("Main Card");
+    const [searchParams, setSearchParams] = useSearchParams();
+    const selectedCard = ["Main Card", "Prelims", "Early Prelims"].includes(searchParams.get("card"))
+        ? searchParams.get("card") : "Main Card";
+    function setSelectedCard(card) {
+        setSearchParams({ card });
+    }
     const [editingBout, setEditingBout] = useState(null);
     const [boutOdds, setBoutOdds] = useState({});
 
